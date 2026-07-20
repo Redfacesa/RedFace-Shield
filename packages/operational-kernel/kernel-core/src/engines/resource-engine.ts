@@ -167,6 +167,11 @@ export class ResourceEngine {
     return mapResourceRow(result.rows[0]);
   }
 
+  async listAll(): Promise<ResourceRecord[]> {
+    const result = await this.db.query(`SELECT * FROM resources ORDER BY type, updated_at DESC`);
+    return result.rows.map(mapResourceRow);
+  }
+
   private async setState(resourceUri: RtnUri, state: ResourceState): Promise<void> {
     await this.db.query(`UPDATE resources SET state = $1, updated_at = NOW() WHERE uri = $2 OR id = $2`, [
       state,

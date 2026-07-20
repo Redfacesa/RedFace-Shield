@@ -68,6 +68,14 @@ export class EventEngine {
     );
     return result.rows.map(mapEventRow);
   }
+
+  async listRecent(limit = 30): Promise<RspEventRecord[]> {
+    const result = await this.db.query(
+      `SELECT * FROM events ORDER BY occurred_at DESC LIMIT $1`,
+      [limit],
+    );
+    return result.rows.map(mapEventRow).reverse();
+  }
 }
 
 export class HistoryEngine {

@@ -2,6 +2,7 @@
  * Runs MVP hijacking recovery and prints mission playback.
  * Demonstrates scrubbable operational timeline from immutable events.
  */
+import { pathToFileURL } from 'node:url';
 import { migrate } from '../db/migrate.js';
 import { runVehicleRecoveryDemo } from '../mvp/hijacking-recovery.js';
 
@@ -26,7 +27,9 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

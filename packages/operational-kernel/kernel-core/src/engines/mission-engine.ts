@@ -182,6 +182,25 @@ export class MissionEngine {
     }
     return mapMissionRow(result.rows[0]);
   }
+
+  async listRecent(limit = 20): Promise<MissionRecord[]> {
+    const result = await this.db.query(
+      `SELECT * FROM missions ORDER BY updated_at DESC LIMIT $1`,
+      [limit],
+    );
+    return result.rows.map(mapMissionRow);
+  }
+
+  async listParticipants(missionUri: RtnUri): Promise<Array<{ organizationUri: RtnUri; role: string }>> {
+    const result = await this.db.query(
+      `SELECT organization_id, role FROM mission_participants WHERE mission_id = $1`,
+      [missionUri],
+    );
+    return result.rows.map((row) => ({
+      organizationUri: row.organization_id as RtnUri,
+      role: row.role as string,
+    }));
+  }
 }
 
 function mapMissionRow(row: Record<string, unknown>): MissionRecord {

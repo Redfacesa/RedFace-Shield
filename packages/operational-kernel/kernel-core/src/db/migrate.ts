@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createPool } from './client.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -19,7 +19,7 @@ export async function migrate(): Promise<void> {
   console.log('Migration complete.');
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   migrate().catch((err) => {
     console.error(err);
     process.exit(1);

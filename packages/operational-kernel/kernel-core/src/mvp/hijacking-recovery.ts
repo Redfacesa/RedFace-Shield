@@ -2,7 +2,7 @@ import { buildRtnUri } from '@redface/shared';
 import { MVP_INTENT_TYPE, MVP_MISSION_TYPE } from '@redface/rsp';
 import type { IdentityRef, RtnUri } from '@redface/shared';
 import { migrate } from '../db/migrate.js';
-import { OperationalKernel } from '../index.js';
+import { OperationalKernel } from '../kernel.js';
 
 /** Platform v0.1 MVP — ownership, stewardship, attestation, derived trust, operational loop */
 
@@ -276,7 +276,11 @@ async function publishTimeline(
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+import { pathToFileURL } from 'node:url';
+
+if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

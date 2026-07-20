@@ -1,0 +1,234 @@
+:root {
+  --rf-bg: #0a0e14;
+  --rf-surface: #121820;
+  --rf-surface-2: #1a2230;
+  --rf-border: #2a3544;
+  --rf-text: #e8edf4;
+  --rf-muted: #8b98a8;
+  --rf-accent: #e63946;
+  --rf-accent-soft: rgba(230, 57, 70, 0.15);
+  --rf-success: #2ecc71;
+  --rf-warning: #f1c40f;
+  --rf-info: #3498db;
+  --rf-font: 'Inter', system-ui, -apple-system, sans-serif;
+  --rf-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--rf-font);
+  background: var(--rf-bg);
+  color: var(--rf-text);
+}
+
+.rf-card {
+  background: var(--rf-surface);
+  border: 1px solid var(--rf-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.rf-stat {
+  background: var(--rf-surface-2);
+  border: 1px solid var(--rf-border);
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+}
+
+.rf-stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--rf-muted);
+}
+
+.rf-stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+
+.rf-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.rf-chip-active { background: var(--rf-accent-soft); color: var(--rf-accent); }
+.rf-chip-completed { background: rgba(46, 204, 113, 0.15); color: var(--rf-success); }
+.rf-chip-planning { background: rgba(52, 152, 219, 0.15); color: var(--rf-info); }
+.rf-chip-paused { background: rgba(241, 196, 15, 0.15); color: var(--rf-warning); }
+
+.rf-btn {
+  appearance: none;
+  border: 1px solid var(--rf-border);
+  background: var(--rf-surface-2);
+  color: var(--rf-text);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.rf-btn-primary {
+  background: var(--rf-accent);
+  border-color: var(--rf-accent);
+  color: white;
+}
+
+.rf-btn:hover { filter: brightness(1.08); }
+
+.rf-timeline-item {
+  display: grid;
+  grid-template-columns: 4rem 1fr;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-left: 2px solid var(--rf-border);
+  margin-left: 0.5rem;
+  padding-left: 1rem;
+}
+
+.rf-timeline-time {
+  font-family: var(--rf-mono);
+  font-size: 0.8rem;
+  color: var(--rf-muted);
+}
+
+.rf-playback-step {
+  opacity: 0.35;
+  transform: translateY(4px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.rf-playback-step.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rf-playback-step.done {
+  opacity: 0.75;
+}
+
+.rf-map {
+  position: relative;
+  background: linear-gradient(180deg, #0d1520 0%, #091018 100%);
+  border: 1px solid var(--rf-border);
+  border-radius: 12px;
+  min-height: 320px;
+  overflow: hidden;
+}
+
+.rf-map-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.rf-map-marker {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px currentColor;
+}
+
+.rf-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+.rf-sidebar {
+  background: var(--rf-surface);
+  border-right: 1px solid var(--rf-border);
+  padding: 1.5rem 1rem;
+}
+
+.rf-nav-link {
+  display: block;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  color: var(--rf-muted);
+  text-decoration: none;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.rf-nav-link.active,
+.rf-nav-link:hover {
+  background: var(--rf-surface-2);
+  color: var(--rf-text);
+}
+
+.rf-main {
+  padding: 1.5rem;
+}
+
+.rf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.rf-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: 0.04em;
+}
+
+.rf-grid-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.rf-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 960px) {
+  .rf-layout { grid-template-columns: 1fr; }
+  .rf-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* 55-inch control room display — append ?tv=1 to any route */
+html.rf-tv .rf-stat-value {
+  font-size: 2.75rem;
+}
+
+html.rf-tv .rf-stat-label {
+  font-size: 0.875rem;
+}
+
+html.rf-tv .rf-header h1 {
+  font-size: 2rem;
+}
+
+html.rf-tv .rf-main {
+  padding: 2rem 2.5rem;
+}
+
+html.rf-tv .rf-map {
+  min-height: 480px;
+}
+
+html.rf-tv .rf-timeline-item,
+html.rf-tv .rf-playback-step {
+  font-size: 1.1rem;
+}

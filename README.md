@@ -2,7 +2,7 @@
 
 > **Enable independent organizations to coordinate critical operations through verifiable, interoperable workflows.**
 
-[North Star](docs/business/NORTH-STAR.md)
+[North Star](docs/business/NORTH-STAR.md) · [Investment Memo](docs/business/INVESTMENT-MEMO.md) · [Investor Readiness](docs/business/INVESTOR-READINESS.md)
 
 ---
 
@@ -12,7 +12,7 @@
 |----------|--------|----------|
 | 1 | Publish **Wave 1 only** (ideas, no protocol) | [Publishing Waves](standards/PUBLISHING-WAVES.md) |
 | 2 | Deploy first control room | [Reference Deployment Playbook](docs/deployments/REFERENCE-DEPLOYMENT-PLAYBOOK.md) |
-| 3 | Measure outcomes | [Scorecard](docs/operations/DEMONSTRATION-SCORECARD.md) · [Benchmark](docs/evidence/benchmark/OPERATIONAL-BENCHMARK.md) |
+| 3 | Measure outcomes | [Scorecard](docs/operations/DEMONSTRATION-SCORECARD.md) · [MCI](docs/evidence/benchmark/MISSION-COORDINATION-INDEX.md) |
 | 4 | Build evidence library | [Evidence Repository](docs/evidence/README.md) |
 | 5 | Wave 2 public case study | After reference customer |
 | 6 | Wave 3 standards | After integrators ask how to connect |

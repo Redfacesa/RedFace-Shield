@@ -6,7 +6,8 @@
   "workspaces": [
     "packages/*",
     "packages/operational-kernel/*",
-    "services/*"
+    "services/*",
+    "applications/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
@@ -19,7 +20,9 @@
     "mvp:hijacking": "npm run mvp:hijacking -w @redface/kernel-core",
     "playback:demo": "npm run playback:demo -w @redface/kernel-core",
     "sim:recovery": "npm run sim:recovery -w @redface/mission-simulator",
-    "kernel:dev": "npm run dev -w @redface/kernel-api"
+    "kernel:dev": "npm run dev -w @redface/kernel-api",
+    "shield:dev": "npm run dev -w @redface/shield-control-room",
+    "shield:build": "npm run build -w @redface/shield-control-room"
   },
   "engines": {
     "node": ">=20"

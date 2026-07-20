@@ -55,6 +55,7 @@ docs/evidence/cases/
 |----------|---------|
 | [Demonstration Scorecard](../operations/DEMONSTRATION-SCORECARD.md) | Before / After metrics |
 | [Operational Benchmark](benchmark/OPERATIONAL-BENCHMARK.md) | Repeatable measurement framework |
+| [Mission Coordination Index (MCI)](benchmark/MISSION-COORDINATION-INDEX.md) | North-star operational metric |
 | [Reference Deployment Playbook](../deployments/REFERENCE-DEPLOYMENT-PLAYBOOK.md) | How first customer deploys |
 | [Publishing Waves](../../standards/PUBLISHING-WAVES.md) | When case studies go public |
 
