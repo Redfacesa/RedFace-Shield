@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   Card,
   LiveMap,
-  MissionCard,
   ResourcePanel,
+  ScanLine,
   StatTile,
   Timeline,
 } from '@redface/ui';
@@ -125,12 +125,11 @@ export function DashboardPage() {
             <p style={{ color: 'var(--rf-muted)' }}>No missions — run npm run mvp:hijacking</p>
           ) : (
             data.missions.slice(0, 5).map((m, i) => (
-              <div key={m.id} style={{ animationDelay: `${i * 80}ms` }}>
-                <MissionCard
-                  title={m.title}
-                  missionId={m.id}
-                  state={m.state}
-                  time={formatTime(m.updatedAt)}
+              <div key={m.id} style={{ animationDelay: `${i * 80}ms`, marginBottom: '0.5rem' }}>
+                <ScanLine
+                  severity={m.priority === 'critical' && m.state !== 'completed' ? 'critical' : m.state === 'completed' ? 'success' : 'info'}
+                  title={m.title.length > 28 ? `${m.title.slice(0, 28)}…` : m.title.toUpperCase()}
+                  segments={[m.state.replace('_', ' ').toUpperCase(), formatTime(m.updatedAt)]}
                   onClick={() => navigate(`/mission?uri=${encodeURIComponent(m.id)}`)}
                 />
               </div>

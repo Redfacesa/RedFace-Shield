@@ -1,7 +1,12 @@
 :root {
   --rf-bg: #0a0e14;
-  --rf-surface: #121820;
-  --rf-surface-2: #1a2230;
+  --rf-layer-bg: #0a0e14;
+  --rf-layer-card: #121820;
+  --rf-layer-elevated: #1a2230;
+  --rf-layer-focus: #222c3a;
+  --rf-surface: var(--rf-layer-card);
+  --rf-surface-2: var(--rf-layer-elevated);
+  --rf-surface-focus: var(--rf-layer-focus);
   --rf-border: #2a3544;
   --rf-text: #e8edf4;
   --rf-muted: #8b98a8;
@@ -690,4 +695,165 @@ html.rf-wall-mode body {
 
 .rf-wall-state-completed {
   color: var(--rf-success);
+}
+
+/* ── Operational primitives (scan · motion · color · hierarchy) ── */
+
+.rf-scan-line {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: var(--rf-layer-focus);
+  border: 1px solid var(--rf-border);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  animation: rf-slide-in 0.4s var(--rf-ease);
+}
+
+.rf-scan-line-critical { border-left: 5px solid var(--rf-emergency); }
+.rf-scan-line-warning { border-left: 5px solid var(--rf-warning); }
+.rf-scan-line-success { border-left: 5px solid var(--rf-safe); }
+.rf-scan-line-info { border-left: 5px solid var(--rf-police); }
+
+.rf-scan-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: rf-pulse 2s ease infinite;
+}
+
+.rf-scan-dot-critical { background: var(--rf-emergency); box-shadow: 0 0 10px var(--rf-emergency); }
+.rf-scan-dot-warning { background: var(--rf-warning); }
+.rf-scan-dot-success { background: var(--rf-safe); }
+.rf-scan-dot-info { background: var(--rf-police); }
+
+.rf-scan-title {
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  flex: 1;
+  min-width: 12rem;
+}
+
+.rf-scan-segment {
+  font-family: var(--rf-mono);
+  font-size: 0.95rem;
+  color: var(--rf-muted);
+  padding: 0.25rem 0.6rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+}
+
+.rf-scan-segment-strong {
+  color: var(--rf-text);
+  font-weight: 800;
+}
+
+.rf-next-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+  animation: rf-slide-in 0.45s var(--rf-ease);
+}
+
+.rf-next-action-critical { background: rgba(230,57,70,0.12); border: 1px solid var(--rf-emergency); }
+.rf-next-action-warning { background: rgba(241,196,15,0.1); border: 1px solid var(--rf-warning); }
+.rf-next-action-success { background: rgba(46,204,113,0.1); border: 1px solid var(--rf-safe); }
+.rf-next-action-info { background: rgba(52,152,219,0.1); border: 1px solid var(--rf-police); }
+
+.rf-next-action-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--rf-muted);
+  margin-bottom: 0.25rem;
+}
+
+.rf-next-action-text {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.rf-evidence-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.rf-evidence-counter.rf-pulse-once {
+  animation: rf-counter-pulse 0.6s ease;
+}
+
+@keyframes rf-counter-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); color: var(--rf-safe); }
+  100% { transform: scale(1); }
+}
+
+.rf-dispatch-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rf-dispatch-active { background: rgba(52,152,219,0.15); color: var(--rf-police); }
+.rf-dispatch-complete { background: rgba(46,204,113,0.15); color: var(--rf-safe); }
+.rf-dispatch-pending { background: rgba(139,152,168,0.15); color: var(--rf-muted); }
+
+.rf-status-ring {
+  --pct: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: conic-gradient(var(--rf-safe) calc(var(--pct) * 1%), var(--rf-border) 0);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.rf-status-ring-inner {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--rf-layer-focus);
+  display: grid;
+  place-items: center;
+  font-family: var(--rf-mono);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.rf-mission-focus {
+  background: var(--rf-layer-focus);
+  border: 1px solid var(--rf-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.rf-resource-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  background: var(--rf-layer-elevated);
+  border: 1px solid var(--rf-border);
+  font-size: 0.875rem;
+  font-weight: 600;
 }

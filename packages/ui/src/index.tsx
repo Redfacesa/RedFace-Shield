@@ -285,3 +285,92 @@ export function ResourcePanel({ groups }: { groups: Record<string, number> }) {
     </div>
   );
 }
+
+/** Scan in 3 seconds — eyes before brain */
+export function ScanLine({
+  severity = 'info',
+  title,
+  segments,
+  onClick,
+}: {
+  severity?: 'critical' | 'warning' | 'success' | 'info' | 'neutral';
+  title: string;
+  segments: string[];
+  onClick?: () => void;
+}) {
+  const sev = severity === 'neutral' ? 'info' : severity;
+  return (
+    <div
+      className={`rf-scan-line rf-scan-line-${sev}`}
+      style={onClick ? { cursor: 'pointer' } : undefined}
+      onClick={onClick}
+      onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+    >
+      <span className={`rf-scan-dot rf-scan-dot-${sev}`} aria-hidden />
+      <span className="rf-scan-title">{title}</span>
+      {segments.map((s, i) => (
+        <span key={s} className={`rf-scan-segment ${i === 0 ? 'rf-scan-segment-strong' : ''}`}>{s}</span>
+      ))}
+    </div>
+  );
+}
+
+/** Quiet answer: what is the next best action? */
+export function NextActionBanner({
+  action,
+  tone = 'info',
+  actionNode,
+}: {
+  action: string;
+  tone?: 'critical' | 'warning' | 'success' | 'info';
+  actionNode?: ReactNode;
+}) {
+  return (
+    <div className={`rf-next-action rf-next-action-${tone}`}>
+      <div>
+        <div className="rf-next-action-label">Next best action</div>
+        <div className="rf-next-action-text">{action}</div>
+      </div>
+      {actionNode}
+    </div>
+  );
+}
+
+export function EvidenceCounter({ count, label = 'Evidence' }: { count: number; label?: string }) {
+  return (
+    <div>
+      <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--rf-muted)' }}>{label}</div>
+      <div className={`rf-evidence-counter ${count > 0 ? 'rf-pulse-once' : ''}`}>{count}</div>
+    </div>
+  );
+}
+
+export function DispatchIndicator({ status }: { status: 'pending' | 'dispatched' | 'en_route' | 'complete' }) {
+  const labels = { pending: 'Awaiting dispatch', dispatched: 'Dispatched', en_route: 'En route', complete: 'On scene' };
+  const cls = status === 'complete' ? 'rf-dispatch-complete' : status === 'pending' ? 'rf-dispatch-pending' : 'rf-dispatch-active';
+  return <span className={`rf-dispatch-indicator ${cls}`}>{labels[status]}</span>;
+}
+
+export function StatusRing({ percent }: { percent: number }) {
+  const pct = Math.min(100, Math.max(0, percent));
+  return (
+    <div className="rf-status-ring" style={{ ['--pct' as string]: pct }}>
+      <div className="rf-status-ring-inner">{pct}%</div>
+    </div>
+  );
+}
+
+export function ResourceBadge({ label }: { label: string }) {
+  return <span className="rf-resource-badge"><span style={{ color: 'var(--rf-safe)' }}>✓</span>{label}</span>;
+}
+
+export function OperationalAlert({ tone, children }: { tone: 'critical' | 'warning' | 'info'; children: ReactNode }) {
+  const border = tone === 'critical' ? 'var(--rf-emergency)' : tone === 'warning' ? 'var(--rf-warning)' : 'var(--rf-police)';
+  return (
+    <div className="rf-alert-banner" style={{ borderLeftColor: border }}>
+      {children}
+    </div>
+  );
+}
