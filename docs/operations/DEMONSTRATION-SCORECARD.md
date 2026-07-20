@@ -43,10 +43,24 @@ This scorecard is the investor slide, the customer proof, and the internal gate 
 | Mission playback available? | No | Yes | | |
 | Outcome metrics recorded? | | | | |
 | Institutional learning captured? | | | | |
+| **Time to first successful mission** (onboarding) | | | | Hours/days from registration |
 
 ---
 
-## Qualitative Observer Questions
+## Independent Observers
+
+Invite external critics — not only internal witnesses:
+
+| Observer role | Organization | Critique notes |
+|---------------|--------------|----------------|
+| Control-room manager | | |
+| Recovery dispatcher | | |
+| Insurer claims lead | | |
+| Municipal coordinator | | |
+
+Did the operational model match reality? Where did it break?
+
+---
 
 Answer yes/no after each demonstration:
 

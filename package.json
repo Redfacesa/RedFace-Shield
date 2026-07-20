@@ -12,6 +12,7 @@
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:local": "node scripts/start-local-db.mjs",
     "db:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
     "db:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
     "db:migrate": "npm run db:migrate -w @redface/kernel-core",
@@ -22,5 +23,9 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "@embedded-postgres/darwin-x64": "^18.4.0-beta.17",
+    "embedded-postgres": "^18.4.0-beta.17"
   }
 }

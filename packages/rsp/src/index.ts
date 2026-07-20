@@ -8,7 +8,7 @@ import {
   isVersionedEventType,
   nextEventVersion,
 } from './event-types.js';
-import { buildEnvelope, formatPlaybackLine, type PlaybackEntry, type RspEnvelope } from './envelope.js';
+import { buildEnvelope, envelopeToPublishInput, formatPlaybackLine, type PlaybackEntry, type RspEnvelope } from './envelope.js';
 import { RspPublisher, createRspPublisher, type RspPublishInput } from './publisher.js';
 
 /** @deprecated Use RSP_PROTOCOL_VERSION */

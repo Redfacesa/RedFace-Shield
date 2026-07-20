@@ -2,9 +2,9 @@
 
 **Architecture v1.0 is ratified.** Progress is measured by operational demonstrations — not engines completed.
 
-See [Architecture v1.0 Ratified](docs/volume-0.75-ratification/ARCHITECTURE-v1.0-RATIFIED.md) · [Operational Demonstration](docs/operations/FIRST-OPERATIONAL-DEMONSTRATION.md) · **[Adoption Strategy](docs/business/ADOPTION-STRATEGY.md)**
+See [Publishing Waves](standards/PUBLISHING-WAVES.md) · [Reference Deployment Playbook](docs/deployments/REFERENCE-DEPLOYMENT-PLAYBOOK.md) · [Evidence Repository](docs/evidence/README.md)
 
-Engineering serves demonstrations. Demonstrations serve adoption. Adoption proves the network.
+**Publish Wave 1 only.** Standards (Wave 3) wait for evidence.
 
 ---
 

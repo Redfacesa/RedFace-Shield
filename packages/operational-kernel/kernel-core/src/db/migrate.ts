@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createPool } from './client.js';
@@ -7,11 +7,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export async function migrate(): Promise<void> {
   const pool = createPool();
-  const files = readdirSync(__dirname)
-    .filter((f) => f.startsWith('schema') && f.endsWith('.sql'))
-    .sort();
+  const order = ['schema.sql', 'schema-phase2.sql', 'schema-v0.1.sql'];
 
-  for (const file of files) {
+  for (const file of order) {
     const sql = readFileSync(join(__dirname, file), 'utf8');
     await pool.query(sql);
     console.log(`Applied ${file}`);

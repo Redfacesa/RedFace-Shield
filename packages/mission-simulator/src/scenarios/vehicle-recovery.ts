@@ -1,4 +1,4 @@
-import { RspEventTypesV1, RspPublisher } from '@redface/rsp';
+import { RspEventTypesV1, RspPublisher, type RspPublishFn } from '@redface/rsp';
 import { buildRtnUri, type RtnUri } from '@redface/shared';
 import { migrate, runVehicleRecoveryDemo } from '@redface/kernel-core';
 
@@ -16,7 +16,7 @@ export async function runRecoverySimulation(options?: { accelerated?: boolean })
 
   try {
     const rsp = new RspPublisher({
-      publish: (input) => kernel.events.publish(input),
+      publish: ((input) => kernel.events.publish(input)) satisfies RspPublishFn,
     });
 
     const cameraUri = buildRtnUri('resource', 'CAM-PARKING-12');

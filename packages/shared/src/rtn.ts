@@ -77,6 +77,7 @@ export type OrganizationType =
   | 'university'
   | 'police'
   | 'recovery'
+  | 'property'
   | 'other';
 
 export interface OrganizationRecord {

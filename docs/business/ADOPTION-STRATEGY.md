@@ -372,16 +372,120 @@ Engineering builds the kernel. This document builds the network.
 
 ---
 
+## Company Narrative
+
+> **RedFace is building an operational coordination platform for organizations that manage critical missions. By combining verifiable operational history, adaptive mission orchestration, and a common event protocol, the platform enables independent organizations to coordinate more effectively without requiring them to replace their existing systems. Security is the first domain in which this model is being proven, with the same operational foundation designed to support additional critical infrastructure sectors over time.**
+
+---
+
+## Legitimacy: Public Standards (Sequenced)
+
+Infrastructure companies become **institutions**. Legitimacy comes from evidence-backed publishing — not volume of specs.
+
+→ **[Publishing Waves](../../standards/PUBLISHING-WAVES.md)** — Wave 1 only at public launch
+
+| Wave | When | What |
+|------|------|------|
+| **1 — Now** | Thought leadership | Whitepaper + 3 guides (no protocol) |
+| **2 — After reference customer** | Demonstrated reality | Case study + scorecard |
+| **3 — After integration demand** | Standards | RSP, RTN, certification, governance |
+
+**North Star:** [NORTH-STAR.md](NORTH-STAR.md)
+
+**First customer playbook:** [Reference Deployment Playbook](../deployments/REFERENCE-DEPLOYMENT-PLAYBOOK.md)
+
+**Evidence library:** [Evidence Repository](../evidence/README.md)
+
+---
+
+## Reference Customer
+
+Success is not "ten customers."
+
+Success is:
+
+> **One respected organization publicly says they run missions on RedFace.**
+
+Identify one control room as **reference implementation**. Name them when ready. Case study + scorecard + quote.
+
+Everything else references: "As used by [Reference Customer]…"
+
+---
+
+## Customer Advisory Group
+
+Not a board — a **working group** (5–8 people):
+
+| Role | Contribution |
+|------|--------------|
+| Control-room operator | Workflow reality check |
+| Security operations manager | Resource and dispatch patterns |
+| Recovery specialist | Mission completion criteria |
+| Insurance claims lead | Evidence and audit requirements |
+| Municipal operations rep | Multi-agency coordination |
+| Technology integration lead | RSP adapter feasibility |
+
+Meet monthly. Show mission playback. Let them shape priorities. Discover where the model mismatches reality.
+
+---
+
+## Independent Validation
+
+Do not only run demonstrations internally.
+
+Invite observers to critique:
+
+- Control-room manager  
+- Recovery company dispatcher  
+- Insurer claims investigator  
+- Municipal emergency coordinator  
+
+Value is not praise — it is discovering whether the operational model matches how they actually work.
+
+Record observer sign-off on [Demonstration Scorecard](../operations/DEMONSTRATION-SCORECARD.md).
+
+---
+
+## Time to Value
+
+Add to scorecard:
+
+> **How long from organization registration to first successful mission?**
+
+| Target | Signal |
+|--------|--------|
+| Same day | Control room runs simulated mission — compelling onboarding |
+| < 1 week | Acceptable with training |
+| > 2 weeks | Adoption friction — simplify |
+
+If a control room completes a simulated mission in one day, that is a sellable operational advantage.
+
+---
+
+## The One Statement (Next Six Months)
+
+Make this undeniably true:
+
+> **A real control room completed real missions on RedFace and measured better operational outcomes than with its previous process.**
+
+Everything else — fundraising, partnerships, protocol adoption, ecosystem growth — becomes easier after this.
+
+Evidence beats elegance. The architecture is coherent. The market needs proof.
+
+---
+
 ## Next Actions (Non-Engineering)
 
-1. Identify **one control room** willing to run Demonstration A on a real mission class
-2. Baseline **scorecard metrics** with them (Before column)
-3. Secure **one insurer** observer for evidence chain demo
-4. Run 30 missions — fill With RedFace column
-5. Draft **10-slide deck** using narrative above (AI last)
-6. Validate **economic buyer** — who signs first contract
+1. **Publish Wave 1 only** — whitepaper + 3 guides ([Publishing Waves](../../standards/PUBLISHING-WAVES.md))
+2. Execute **[Reference Deployment Playbook](../deployments/REFERENCE-DEPLOYMENT-PLAYBOOK.md)** with first control room
+3. Baseline **[Operational Benchmark](../evidence/benchmark/OPERATIONAL-BENCHMARK.md)** and scorecard
+4. Form **Customer Advisory Group** (5–8 operators)
+5. Run missions with **independent observers** — signed scorecard
+6. Populate **[Evidence Repository](../evidence/README.md)** — case study after Day 30
+7. **Wave 2 publish** — case study only after customer approval
+8. **Wave 3 publish** — standards only after integrators ask how to connect
 
-Parallel engineering (minimal): RSP SDK, playback, simulator — in service of demonstrations, not feature breadth.
+Stop writing internal foundational documents. Execute deployments. Collect evidence.
 
 ---
 
@@ -389,4 +493,5 @@ Parallel engineering (minimal): RSP SDK, playback, simulator — in service of d
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1 | 2026-07-20 | Legitimacy layer — public standards, reference customer, CAG, independent validation |
 | 1.0 | 2026-07-20 | Initial adoption strategy — post Architecture v1.0 |

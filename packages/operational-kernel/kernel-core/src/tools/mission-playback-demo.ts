@@ -2,7 +2,8 @@
  * Runs MVP hijacking recovery and prints mission playback.
  * Demonstrates scrubbable operational timeline from immutable events.
  */
-import { migrate, runVehicleRecoveryDemo } from '../mvp/hijacking-recovery.js';
+import { migrate } from '../db/migrate.js';
+import { runVehicleRecoveryDemo } from '../mvp/hijacking-recovery.js';
 
 async function main(): Promise<void> {
   await migrate();
