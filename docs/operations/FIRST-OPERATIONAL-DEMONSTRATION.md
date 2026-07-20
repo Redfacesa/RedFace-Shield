@@ -119,6 +119,8 @@ Demonstration succeeds when an independent observer can verify:
 - [ ] Outcome includes measurable metrics
 - [ ] Operation was coordinated better than the "Before RedFace" baseline
 
+See [Demonstration Scorecard](DEMONSTRATION-SCORECARD.md) — fill Before/With RedFace metrics for every demo.
+
 ---
 
 ## Mission Playback

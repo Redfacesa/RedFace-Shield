@@ -12,7 +12,10 @@ RedFace is an **Operational Infrastructure Platform**. Trust is not assumed — 
 
 Architecture is internally consistent and **frozen**. Changes require constitutional amendment.
 
-Primary focus: **[The First Operational Demonstration](docs/operations/FIRST-OPERATIONAL-DEMONSTRATION.md)**
+Primary focus:
+
+- **Prove operations:** [First Operational Demonstration](docs/operations/FIRST-OPERATIONAL-DEMONSTRATION.md)
+- **Win the market:** [Adoption Strategy](docs/business/ADOPTION-STRATEGY.md)
 
 ```bash
 npm install
@@ -51,7 +54,8 @@ Volume 1–9    Derived docs       Must pass Doctrine Test
 | [Engine Contract](docs/volume-0.75-ratification/ENGINE-CONTRACT.md) | Owns · Consumes · Produces · Never Does |
 | [Engine Versions](docs/volume-0.75-ratification/ENGINE-VERSIONS.md) | Semantic versioning per engine |
 | [RSP SDK](docs/volume-08-developer-platform/RSP-SDK.md) | Build SDK before adapters |
-| [Certification](docs/volume-08-developer-platform/CERTIFICATION.md) | Ecosystem governance |
+| [Adoption Strategy](docs/business/ADOPTION-STRATEGY.md) | Network effect, flywheel, economic buyer, GTM |
+| [Demonstration Scorecard](docs/operations/DEMONSTRATION-SCORECARD.md) | Before/With RedFace metrics |
 
 ---
 
