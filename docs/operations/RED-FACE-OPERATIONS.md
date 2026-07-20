@@ -41,6 +41,9 @@ Everything else supports this cycle.
 | [Learning Ticket](./LEARNING-TICKET-TEMPLATE.md) | Every backlog item traces to a mission |
 | [Weekly Mission Review](./WEEKLY-MISSION-REVIEW.md) | Friday agenda |
 | [Operational Readiness Levels](./OPERATIONAL-READINESS-LEVELS.md) | ODR-1 … ODR-5 |
+| [Company State](./COMPANY-STATE.md) | Operational Validation — chapter closed |
+| [Architecture v1.0 — Final](./ARCHITECTURE-v1.0-FINAL.md) | Evidence hierarchy; learning loop |
+| [Things We Refused to Build](./THINGS-WE-REFUSED-TO-BUILD.md) | Quarterly discipline — permission to say no |
 
 ---
 
