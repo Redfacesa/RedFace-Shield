@@ -144,6 +144,7 @@ async function main() {
   server.listen(PORT, () => {
     console.log(`Kernel API (Architecture v${ARCHITECTURE_VERSION}) http://localhost:${PORT}`);
     console.log(`Health: GET /health`);
+    console.log(`Intel: GET /intel/summary`);
     console.log(`Control Room: GET /control-room/dashboard`);
     console.log(`Mission: GET /missions?uri=...&brief=true`);
     console.log(`Report: GET /missions?uri=...&report=html|json`);

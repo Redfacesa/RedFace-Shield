@@ -27,20 +27,39 @@ interface IntelSummary {
 
 export function IntelPage() {
   const [intel, setIntel] = useState<IntelSummary | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = () => {
+    fetch('/api/intel/summary')
+      .then((r) => {
+        if (!r.ok) throw new Error(`Intel API ${r.status} — restart kernel: npm run kernel:dev`);
+        return r.json();
+      })
+      .then((data) => {
+        setIntel(data);
+        setError(null);
+      })
+      .catch((e) => {
+        setError(e instanceof Error ? e.message : 'Failed to load intel');
+      });
+  };
 
   useEffect(() => {
-    fetch('/api/intel/summary')
-      .then((r) => r.json())
-      .then(setIntel)
-      .catch(() => {});
-    const id = setInterval(() => {
-      fetch('/api/intel/summary')
-        .then((r) => r.json())
-        .then(setIntel)
-        .catch(() => {});
-    }, 30000);
+    load();
+    const id = setInterval(load, 30000);
     return () => clearInterval(id);
   }, []);
+
+  if (error) {
+    return (
+      <div>
+        <h2>Mission Intelligence unavailable</h2>
+        <p style={{ color: 'var(--rf-muted)' }}>{error}</p>
+        <p>The <code>/intel/summary</code> endpoint requires a current kernel API. Stop and restart:</p>
+        <pre style={{ background: 'var(--rf-surface-2)', padding: '1rem', borderRadius: 8 }}>npm run kernel:dev</pre>
+      </div>
+    );
+  }
 
   if (!intel) return <p style={{ color: 'var(--rf-muted)' }}>Loading Mission Intelligence…</p>;
 
