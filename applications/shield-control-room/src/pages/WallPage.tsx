@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { LiveMap, PlaybackTimeline, StatTile } from '@redface/ui';
-import { type DashboardData, eventLabel, fetchDashboard, fetchMission, formatTime } from '../api';
+import { type DashboardData, eventLabel, fetchDashboard, fetchMission, formatDecisionLatency, formatTime } from '../api';
 
 type WallPanel = 'overview' | 'playback';
 
@@ -96,6 +96,7 @@ export function WallPage() {
         <StatTile label="Cameras" value={data.stats.camerasOnline} />
         <StatTile label="Alerts Today" value={data.stats.alertsToday} />
         <StatTile label="MCI" value={`${data.stats.mciPercent}%`} highlight />
+        <StatTile label="Decision Latency" value={formatDecisionLatency(data.stats.decisionLatencySeconds)} highlight />
       </div>
 
       {panel === 'overview' ? (
@@ -150,7 +151,7 @@ export function WallPage() {
         </div>
       ) : (
         <section className="rf-wall-panel rf-wall-playback-panel">
-          <h2>Live Playback — {featuredMission?.title ?? 'Mission'}</h2>
+          <h2>Live Operation Replay — {featuredMission?.title ?? 'Mission'}</h2>
           {playbackEntries.length === 0 ? (
             <p className="rf-wall-muted">Loading playback…</p>
           ) : (

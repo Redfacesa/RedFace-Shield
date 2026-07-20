@@ -1,5 +1,6 @@
 import type { OperationalKernel } from '@redface/kernel-core';
 import type { MissionRecord, ResourceRecord, RspEventRecord } from '@redface/shared';
+import { computeDecisionLatencySeconds } from './metrics.js';
 
 export interface ControlRoomDashboard {
   stats: {
@@ -9,6 +10,7 @@ export interface ControlRoomDashboard {
     camerasOnline: number;
     alertsToday: number;
     mciPercent: number;
+    decisionLatencySeconds: number | null;
   };
   missions: MissionRecord[];
   recentEvents: RspEventRecord[];
@@ -23,6 +25,13 @@ function computeMci(missions: MissionRecord[]): number {
   }
   const success = completed.filter((m) => m.outcome?.result === 'success').length / completed.length;
   return Math.round(success * 100);
+}
+
+async function latestDecisionLatency(kernel: OperationalKernel, missions: MissionRecord[]): Promise<number | null> {
+  const latest = missions[0];
+  if (!latest) return null;
+  const timeline = await kernel.history.getMissionTimeline(latest.id);
+  return computeDecisionLatencySeconds(timeline);
 }
 
 export async function getControlRoomDashboard(kernel: OperationalKernel): Promise<ControlRoomDashboard> {
@@ -43,6 +52,8 @@ export async function getControlRoomDashboard(kernel: OperationalKernel): Promis
     (e) => e.occurredAt >= today && (e.type.includes('alarm') || e.type.includes('panic') || e.type.includes('motion')),
   ).length;
 
+  const decisionLatencySeconds = await latestDecisionLatency(kernel, missions);
+
   return {
     stats: {
       activeMissions,
@@ -51,6 +62,7 @@ export async function getControlRoomDashboard(kernel: OperationalKernel): Promis
       camerasOnline: cameras.length,
       alertsToday: alertsToday || recentEvents.length,
       mciPercent: computeMci(missions),
+      decisionLatencySeconds,
     },
     missions,
     recentEvents: [...recentEvents].reverse(),

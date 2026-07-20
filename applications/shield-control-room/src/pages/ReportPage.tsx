@@ -53,17 +53,17 @@ export function ReportPage() {
       </Card>
 
       <div className="rf-grid-2" style={{ marginTop: '1rem' }}>
-        <Card title="Playback Reference">
+        <Card title="Operation Replay Reference">
           <p><strong>{report.playbackId}</strong></p>
           <p style={{ fontSize: '0.875rem', color: 'var(--rf-muted)' }}>
-            {report.playback.entryCount} events · {report.playback.durationSeconds}s
+            Decision latency: {report.decisionLatencyLabel} · {report.playback.entryCount} events
           </p>
           <p style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>{report.playbackUrl}</p>
           <p style={{ color: 'var(--rf-muted)', fontSize: '0.875rem' }}>
-            Full operational history available via playback — this report stays concise.
+            Full operational history available via Operation Replay — this report stays concise.
           </p>
           <Link to={`/playback?uri=${encodeURIComponent(uri)}`}>
-            <Button primary>▶ Open Playback</Button>
+            <Button primary>▶ Open Operation Replay</Button>
           </Link>
         </Card>
         <Card title="Attestations">

@@ -17,7 +17,7 @@ function ShellNav() {
       <NavLink to="/" active={pathname === '/'}>Dashboard</NavLink>
       <NavLink to="/missions" active={pathname === '/missions'}>Missions</NavLink>
       <NavLink to="/map" active={pathname === '/map'}>Live Map</NavLink>
-      <NavLink to="/playback" active={pathname.startsWith('/playback')}>Playback</NavLink>
+      <NavLink to="/playback" active={pathname.startsWith('/playback')}>Operation Replay</NavLink>
       <NavLink to="/wall" active={pathname === '/wall'}>Operations Wall</NavLink>
     </>
   );

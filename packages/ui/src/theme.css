@@ -66,6 +66,39 @@ body {
 .rf-chip-completed { background: rgba(46, 204, 113, 0.15); color: var(--rf-success); }
 .rf-chip-planning { background: rgba(52, 152, 219, 0.15); color: var(--rf-info); }
 .rf-chip-paused { background: rgba(241, 196, 15, 0.15); color: var(--rf-warning); }
+.rf-chip-critical { background: rgba(230, 57, 70, 0.2); color: var(--rf-accent); }
+
+.rf-priority {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 2px solid var(--rf-border);
+  min-width: 140px;
+}
+
+.rf-priority-critical {
+  border-color: var(--rf-accent);
+  background: var(--rf-accent-soft);
+}
+
+.rf-priority-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--rf-muted);
+}
+
+.rf-priority-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.rf-priority-critical .rf-priority-value {
+  color: var(--rf-accent);
+}
 
 .rf-btn {
   appearance: none;
@@ -116,6 +149,111 @@ body {
 
 .rf-playback-step.done {
   opacity: 0.75;
+}
+
+/* Operation Replay — CCTV-style timeline */
+.rf-replay {
+  padding: 1rem 0;
+  position: relative;
+}
+
+.rf-replay-step {
+  display: flex;
+  gap: 1.25rem;
+  padding: 0.75rem 0;
+  opacity: 0.3;
+  transform: translateX(-8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.rf-replay-step.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.rf-replay-step.active .rf-replay-marker {
+  box-shadow: 0 0 16px var(--rf-accent);
+  animation: rf-pulse 1.5s ease infinite;
+}
+
+.rf-replay-step.done {
+  opacity: 0.65;
+}
+
+.rf-replay-marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--rf-border);
+  margin-top: 0.5rem;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.rf-replay-step.done .rf-replay-marker {
+  background: var(--rf-success);
+}
+
+.rf-replay-step.active .rf-replay-marker {
+  background: var(--rf-accent);
+}
+
+.rf-replay-step:not(:last-child) .rf-replay-marker::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  width: 2px;
+  height: calc(100% + 1.5rem);
+  background: var(--rf-border);
+  transform: translateX(-50%);
+}
+
+.rf-replay-time {
+  font-family: var(--rf-mono);
+  font-size: 1.35rem;
+  color: var(--rf-muted);
+}
+
+.rf-replay-step.active .rf-replay-time {
+  color: var(--rf-text);
+}
+
+.rf-replay-label {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+
+@keyframes rf-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Mission Brief — operations center document */
+.rf-brief {
+  max-width: 960px;
+}
+
+.rf-brief-header {
+  border-bottom: 2px solid var(--rf-accent);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.rf-brief-objective {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 1rem 0 0;
+}
+
+.rf-brief-risk {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--rf-warning);
+  background: rgba(241, 196, 15, 0.08);
+  margin-bottom: 0.5rem;
+  border-radius: 0 8px 8px 0;
 }
 
 .rf-map {
@@ -285,6 +423,16 @@ html.rf-wall-mode body {
 .rf-wall-live {
   color: var(--rf-success);
   font-weight: 700;
+  animation: rf-pulse 2s ease infinite;
+}
+
+.rf-wall-panel {
+  animation: rf-fade-in 0.6s ease;
+}
+
+@keyframes rf-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .rf-wall-stats {

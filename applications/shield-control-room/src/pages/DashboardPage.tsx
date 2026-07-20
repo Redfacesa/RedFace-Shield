@@ -8,7 +8,7 @@ import {
   StatTile,
   Timeline,
 } from '@redface/ui';
-import { type DashboardData, eventLabel, fetchDashboard, formatTime } from '../api';
+import { type DashboardData, eventLabel, fetchDashboard, formatDecisionLatency, formatTime } from '../api';
 
 export function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -73,6 +73,7 @@ export function DashboardPage() {
         <StatTile label="Cameras Online" value={data.stats.camerasOnline} />
         <StatTile label="Alerts Today" value={data.stats.alertsToday} />
         <StatTile label="MCI" value={`${data.stats.mciPercent}%`} highlight />
+        <StatTile label="Decision Latency" value={formatDecisionLatency(data.stats.decisionLatencySeconds)} highlight />
       </div>
 
       <div className="rf-grid-2" style={{ marginBottom: '1rem' }}>

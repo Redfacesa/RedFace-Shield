@@ -24,8 +24,18 @@ export function StatTile({ label, value, highlight }: { label: string; value: st
 }
 
 export function StatusChip({ state }: { state: string }) {
-  const cls = ['active', 'completed', 'planning', 'paused'].includes(state) ? `rf-chip-${state}` : 'rf-chip-planning';
+  const cls = ['active', 'completed', 'planning', 'paused', 'critical'].includes(state) ? `rf-chip-${state}` : 'rf-chip-planning';
   return <span className={`rf-chip ${cls}`}>{state.replace('_', ' ')}</span>;
+}
+
+export function PriorityBadge({ priority }: { priority: string }) {
+  const level = priority.toLowerCase();
+  return (
+    <div className={`rf-priority rf-priority-${level}`}>
+      <span className="rf-priority-label">Priority</span>
+      <span className="rf-priority-value">{priority}</span>
+    </div>
+  );
 }
 
 export function Button({ children, primary, onClick, type = 'button' }: { children: ReactNode; primary?: boolean; onClick?: () => void; type?: 'button' | 'submit' }) {
@@ -79,22 +89,25 @@ export function Timeline({ entries }: { entries: TimelineEntry[] }) {
 
 export function PlaybackTimeline({ entries, activeIndex }: { entries: TimelineEntry[]; activeIndex: number }) {
   return (
-    <div style={{ padding: '1rem 0' }}>
+    <div className="rf-replay">
       {entries.map((entry, i) => {
         const state = i < activeIndex ? 'done' : i === activeIndex ? 'active' : '';
         return (
-          <div key={`${entry.time}-${i}`} className={`rf-playback-step ${state}`}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-              <div style={{ fontFamily: 'var(--rf-mono)', fontSize: '1.25rem', minWidth: '4rem' }}>{entry.time}</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{entry.label}</div>
+          <div key={`${entry.time}-${i}`} className={`rf-replay-step ${state}`}>
+            <div className="rf-replay-marker" />
+            <div className="rf-replay-content">
+              <div className="rf-replay-time">{entry.time}</div>
+              <div className="rf-replay-label">{entry.label}</div>
             </div>
-            {i < entries.length - 1 && <div style={{ marginLeft: '2rem', color: 'var(--rf-muted)' }}>↓</div>}
           </div>
         );
       })}
     </div>
   );
 }
+
+/** Operator-facing alias */
+export const ReplayTimeline = PlaybackTimeline;
 
 export interface MapMarker {
   id: string;

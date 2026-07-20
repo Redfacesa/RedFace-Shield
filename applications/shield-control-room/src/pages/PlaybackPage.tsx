@@ -43,7 +43,7 @@ export function PlaybackPage() {
       <div className="rf-header">
         <div>
           <Link to="/" style={{ color: 'var(--rf-muted)', textDecoration: 'none', fontSize: '0.875rem' }}>← Dashboard</Link>
-          <h1 style={{ marginTop: '0.5rem' }}>▶ Mission Playback</h1>
+          <h1 style={{ marginTop: '0.5rem' }}>▶ Operation Replay</h1>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <Button onClick={() => { setActiveIndex(0); setPlaying(false); }}>Reset</Button>
@@ -75,7 +75,7 @@ export function PlaybackPage() {
         </Card>
       </div>
 
-      <Card title="Playback Timeline" >
+      <Card title="Operation Replay Timeline" >
         {entries.length === 0 ? (
           <p style={{ color: 'var(--rf-muted)' }}>No playback data</p>
         ) : (

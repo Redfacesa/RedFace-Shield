@@ -8,6 +8,7 @@ export interface DashboardData {
     camerasOnline: number;
     alertsToday: number;
     mciPercent: number;
+    decisionLatencySeconds: number | null;
   };
   missions: MissionSummary[];
   recentEvents: EventSummary[];
@@ -94,6 +95,8 @@ export interface MissionReport {
   evidence: Array<{ label: string; time: string; type: string }>;
   attestations: Array<{ type: string; statement: string; by: string }>;
   mci: { missionCoordinationIndex: number; outcome: string };
+  decisionLatencySeconds: number | null;
+  decisionLatencyLabel: string;
   playback: { entryCount: number; durationSeconds: number };
 }
 
@@ -112,6 +115,14 @@ export async function fetchMissionReport(uri: string): Promise<MissionReport> {
 
 export function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+export function formatDecisionLatency(seconds: number | null): string {
+  if (seconds === null) return '—';
+  if (seconds < 60) return `${seconds}s`;
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
 }
 
 export function eventLabel(type: string): string {

@@ -12,9 +12,50 @@ Every change should answer:
 - What decision becomes easier?
 - What measurable outcome improves?
 
-## Sprint Goal
+---
 
-> A control-room supervisor can walk into the room, run a complete simulated vehicle recovery, monitor it on the Operations Wall, review it in Playback, and leave with a printable Mission Report — without needing the architecture explained.
+## Operational Demonstration Ready (ODR-1)
+
+Internal milestone — not a version number, a **demonstration state**.
+
+| Criterion | Status |
+|-----------|--------|
+| Mission Brief | ✅ |
+| Operations Wall | ✅ |
+| Live Mission | ✅ |
+| Operation Replay | ✅ |
+| Mission Report | ✅ |
+| Acceptance Test | ✅ |
+| Stable Kernel | ✅ |
+| Live WebSockets | ⏳ |
+| Reference Deployment | ⏳ |
+
+### Operational narrative
+
+```text
+Mission Begins → Mission Brief → Operations Wall → Operation Replay → Mission Report
+```
+
+| Stakeholder | Uses |
+|-------------|------|
+| Supervisor | Mission Brief |
+| Control Room | Operations Wall |
+| Field Teams | Live Mission |
+| Management | Operation Replay |
+| Insurer / Client | Mission Report |
+| Auditor | Replay + Report |
+
+### Five-minute demo script
+
+1. **Minute 1** — Mission Brief. *"This vehicle has been reported stolen."*
+2. **Minute 2** — Start simulator (`npm run sim:recovery` or seeded MVP).
+3. **Minute 3** — Operations Wall (`/wall`). Mission appears. Resources dispatch.
+4. **Minute 4** — Operation Replay. Show animated timeline.
+5. **Minute 5** — Generate Report. Print. Done.
+
+No PowerPoint. The product tells the story.
+
+---
 
 ## Three Operational Documents
 
@@ -24,50 +65,39 @@ Every change should answer:
 | During | Operations Wall | `/wall` |
 | After | Mission Report | `/report?uri=...` |
 
-## Shield Control Room v0.1
+## Shield Control Room
 
-| Screen | Route | Status |
-|--------|-------|--------|
-| Dashboard | `/` | ✅ v0.1 |
-| Mission Queue | `/missions` | ✅ v0.1 |
-| Mission Brief | `/brief?uri=...` | ✅ v0.1 |
-| Mission Workspace | `/mission?uri=...` | ✅ v0.1 |
-| Playback | `/playback?uri=...` | ✅ v0.1 |
-| Live Map | `/map` | ✅ v0.1 |
-| **Operations Wall** | `/wall` | ✅ v0.1 |
-| **Mission Report** | `/report?uri=...` | ✅ v0.1 |
-| Guard Mobile | — | Planned |
-| Supervisor Portal | — | Planned |
-| Customer Portal | — | Planned |
-
-### Design System
-
-Shared components: `@redface/ui`
+| Screen | Route |
+|--------|-------|
+| Dashboard | `/` |
+| Mission Queue | `/missions` |
+| Mission Brief | `/brief?uri=...` |
+| Mission Workspace | `/mission?uri=...` |
+| Operation Replay | `/playback?uri=...` |
+| Live Map | `/map` |
+| **Operations Wall** | `/wall` |
+| **Mission Report** | `/report?uri=...` |
 
 ### Run
 
 ```bash
-# Terminal 1 — database
 npm run db:local
-
-# Terminal 2 — seed demo data (once)
-npm run db:migrate && npm run mvp:hijacking
-
-# Terminal 3 — kernel API
+npm run db:migrate && npm run mvp:hijacking   # once
 npm run kernel:dev
-
-# Terminal 4 — control room UI
 npm run shield:dev
+npm run accept:recovery                       # regression gate
 ```
 
-Open http://localhost:5173
+- Control Room: http://localhost:5173
+- **Operations Wall:** http://localhost:5173/wall
 
-**Operations Wall (55-inch display):** http://localhost:5173/wall
+### KPIs (operator-facing)
 
-**Acceptance test:** `npm run accept:recovery` (requires kernel API + seeded data)
+- **MCI** — Mission Coordination Index (% successful completions)
+- **Decision Latency** — seconds from intent to first operational decision (dispatch/allocation)
+
+Both computed by the API from kernel events — not in the UI.
 
 ### Architecture Rule
 
-UI reads kernel via `/api` proxy → `kernel-api`. Never embeds mission logic.
-
-Brief and report data are assembled by the API from kernel state — not computed in React.
+UI reads kernel via `/api` proxy. Brief, report, and metrics are assembled server-side.

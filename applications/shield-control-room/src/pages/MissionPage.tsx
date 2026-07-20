@@ -36,7 +36,7 @@ export function MissionPage() {
             <Button>Mission Brief</Button>
           </Link>
           <Link to={`/playback?uri=${encodeURIComponent(mission.id)}`}>
-            <Button>▶ Playback</Button>
+            <Button>▶ Operation Replay</Button>
           </Link>
           {mission.state === 'completed' && (
             <Link to={`/report?uri=${encodeURIComponent(mission.id)}`}>
