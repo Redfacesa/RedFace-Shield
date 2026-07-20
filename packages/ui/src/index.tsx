@@ -14,11 +14,24 @@ export function Card({ title, children, action }: { title?: string; children: Re
   );
 }
 
-export function StatTile({ label, value, highlight }: { label: string; value: string | number; highlight?: boolean }) {
+export function StatTile({
+  label,
+  value,
+  highlight,
+  variant,
+  hero,
+}: {
+  label: string;
+  value: string | number;
+  highlight?: boolean;
+  variant?: 'critical' | 'success' | 'warning' | 'info' | 'neutral';
+  hero?: boolean;
+}) {
+  const variantClass = variant ? `rf-stat-${variant}` : highlight ? 'rf-stat-highlight' : '';
   return (
-    <div className="rf-stat" style={highlight ? { borderColor: 'var(--rf-accent)' } : undefined}>
+    <div className={`rf-stat ${hero ? 'rf-stat-hero' : ''} ${variantClass}`.trim()}>
       <div className="rf-stat-label">{label}</div>
-      <div className="rf-stat-value" style={highlight ? { color: 'var(--rf-accent)' } : undefined}>{value}</div>
+      <div className="rf-stat-value">{value}</div>
     </div>
   );
 }
@@ -74,13 +87,83 @@ export interface TimelineEntry {
   label: string;
 }
 
-export function Timeline({ entries }: { entries: TimelineEntry[] }) {
+export function Timeline({ entries, operational }: { entries: TimelineEntry[]; operational?: boolean }) {
   return (
-    <div>
+    <div className={operational ? 'rf-ops-timeline' : undefined}>
       {entries.map((entry, i) => (
-        <div key={`${entry.time}-${i}`} className="rf-timeline-item">
+        <div key={`${entry.time}-${i}`} className="rf-timeline-item rf-animate-in" style={{ animationDelay: `${i * 40}ms` }}>
           <div className="rf-timeline-time">{entry.time}</div>
           <div>{entry.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function ProgressBar({ value, label }: { value: number; label?: string }) {
+  const pct = Math.min(100, Math.max(0, value));
+  const complete = pct >= 100;
+  return (
+    <div className={`rf-progress ${complete ? 'rf-progress-complete' : ''}`}>
+      <div className="rf-progress-label">
+        <span>{label ?? 'Progress'}</span>
+        <span>{pct}%</span>
+      </div>
+      <div className="rf-progress-track">
+        <div className="rf-progress-fill" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+export function MissionHeader({
+  eyebrow,
+  title,
+  objective,
+  priority,
+  state,
+  progress,
+  actions,
+}: {
+  eyebrow?: string;
+  title: string;
+  objective?: string;
+  priority?: string;
+  state: string;
+  progress?: number;
+  actions?: ReactNode;
+}) {
+  return (
+    <div className="rf-mission-header rf-animate-in">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          {eyebrow && (
+            <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--rf-accent)' }}>
+              {eyebrow}
+            </div>
+          )}
+          <h1 className="rf-mission-title">{title}</h1>
+          {objective && <p className="rf-mission-objective">{objective}</p>}
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          {priority && <PriorityBadge priority={priority} />}
+          <StatusChip state={state} />
+          {actions}
+        </div>
+      </div>
+      {progress !== undefined && <ProgressBar value={progress} />}
+    </div>
+  );
+}
+
+export function ResourceList({ items }: { items: Array<{ label: string; role?: string }> }) {
+  return (
+    <div>
+      {items.map((item) => (
+        <div key={`${item.label}-${item.role}`} className="rf-resource-row">
+          <span className="rf-resource-check">✓</span>
+          <span>{item.label}</span>
+          {item.role && <span style={{ color: 'var(--rf-muted)', marginLeft: 'auto' }}>{item.role}</span>}
         </div>
       ))}
     </div>
@@ -115,9 +198,11 @@ export interface MapMarker {
   lat: number;
   lon: number;
   color: string;
+  live?: boolean;
+  offline?: boolean;
 }
 
-export function LiveMap({ markers, title }: { markers: MapMarker[]; title?: string }) {
+export function LiveMap({ markers, title, tall }: { markers: MapMarker[]; title?: string; tall?: boolean }) {
   const lats = markers.map((m) => m.lat);
   const lons = markers.map((m) => m.lon);
   const minLat = Math.min(...lats, -34);
@@ -131,20 +216,21 @@ export function LiveMap({ markers, title }: { markers: MapMarker[]; title?: stri
   });
 
   return (
-    <div className="rf-map">
+    <div className="rf-map" style={tall ? { minHeight: 420 } : undefined}>
       <div className="rf-map-grid" />
       {title && (
         <div style={{ position: 'absolute', top: 12, left: 12, fontSize: '0.75rem', color: 'var(--rf-muted)', textTransform: 'uppercase' }}>
           {title}
         </div>
       )}
-      {markers.map((m) => {
+      {markers.map((m, i) => {
         const pos = project(m.lat, m.lon);
+        const cls = ['rf-map-marker', m.live ? 'rf-map-marker-live' : '', m.offline ? 'rf-map-marker-offline' : ''].filter(Boolean).join(' ');
         return (
           <div
             key={m.id}
-            className="rf-map-marker"
-            style={{ ...pos, background: m.color, color: m.color }}
+            className={cls}
+            style={{ ...pos, background: m.color, color: m.color, animationDelay: `${i * 60}ms` }}
             title={m.label}
           />
         );
@@ -168,8 +254,8 @@ export function MissionCard({
 }) {
   return (
     <div
-      className="rf-card"
-      style={{ cursor: onClick ? 'pointer' : undefined, marginBottom: '0.75rem' }}
+      className="rf-card rf-mission-card"
+      style={{ cursor: onClick ? 'pointer' : undefined, marginBottom: '0.75rem', animationDelay: '0ms' }}
       onClick={onClick}
       onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
       role={onClick ? 'button' : undefined}

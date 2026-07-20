@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -9,6 +9,20 @@ import {
   Timeline,
 } from '@redface/ui';
 import { type DashboardData, eventLabel, fetchDashboard, formatDecisionLatency, formatTime } from '../api';
+
+function missionCounts(missions: DashboardData['missions']) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const critical = missions.filter(
+    (m) => m.priority === 'critical' && ['planning', 'active', 'paused'].includes(m.state),
+  ).length;
+  const pending = missions.filter((m) => m.state === 'planning').length;
+  const resolvedToday = missions.filter(
+    (m) => m.state === 'completed' && new Date(m.updatedAt) >= today,
+  ).length;
+  const active = missions.filter((m) => ['planning', 'active', 'paused'].includes(m.state)).length;
+  return { critical, pending, resolvedToday, active };
+}
 
 export function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -23,6 +37,14 @@ export function DashboardPage() {
     return () => clearInterval(id);
   }, []);
 
+  const counts = useMemo(() => (data ? missionCounts(data.missions) : null), [data]);
+
+  const coverage = useMemo(() => {
+    if (!data?.resources.length) return 0;
+    const located = data.resources.filter((r) => r.location?.lat && r.location?.lon).length;
+    return Math.round((located / data.resources.length) * 100);
+  }, [data]);
+
   if (error) {
     return (
       <div>
@@ -33,7 +55,7 @@ export function DashboardPage() {
     );
   }
 
-  if (!data) return <p style={{ color: 'var(--rf-muted)' }}>Loading operational picture…</p>;
+  if (!data || !counts) return <p style={{ color: 'var(--rf-muted)' }}>Loading operational picture…</p>;
 
   const resourceGroups = data.resources.reduce<Record<string, number>>((acc, r) => {
     acc[r.type] = (acc[r.type] ?? 0) + 1;
@@ -48,7 +70,12 @@ export function DashboardPage() {
       label: r.id.split('/').pop() ?? r.type,
       lat: r.location!.lat,
       lon: r.location!.lon,
-      color: r.type === 'guard' ? '#3498db' : r.type === 'vehicle' ? '#e63946' : r.type === 'camera' ? '#2ecc71' : '#f1c40f',
+      color:
+        r.type === 'guard' ? 'var(--rf-police)' :
+        r.type === 'vehicle' ? 'var(--rf-emergency)' :
+        r.type === 'camera' ? 'var(--rf-safe)' : 'var(--rf-warning)',
+      live: r.state === 'allocated' || r.state === 'available',
+      offline: r.state === 'unavailable',
     }));
 
   const feedEntries = data.recentEvents.slice(-8).reverse().flatMap((e) => {
@@ -59,40 +86,54 @@ export function DashboardPage() {
     }];
   });
 
+  const resourcesOnline = data.resources.filter((r) => r.state !== 'unavailable').length;
+
   return (
     <>
-      <div className="rf-header">
-        <h1>REDFACE SHIELD CONTROL ROOM</h1>
-        <span style={{ color: 'var(--rf-muted)', fontSize: '0.875rem' }}>Live · Kernel API</span>
+      <div className="rf-header rf-animate-in">
+        <div>
+          <div style={{ fontSize: '0.7rem', letterSpacing: '0.14em', color: 'var(--rf-muted)' }}>OPERATIONS</div>
+          <h1 style={{ fontSize: '1.5rem', marginTop: '0.25rem' }}>Control Room</h1>
+        </div>
+        <span className="rf-alert-banner" style={{ margin: 0, borderLeftColor: 'var(--rf-safe)' }}>
+          <span style={{ color: 'var(--rf-safe)', fontWeight: 700 }}>● LIVE</span>
+          <span style={{ color: 'var(--rf-muted)' }}>Kernel connected</span>
+        </span>
       </div>
 
-      <div className="rf-grid-stats" style={{ marginBottom: '1.5rem' }}>
-        <StatTile label="Active Missions" value={data.stats.activeMissions} highlight />
-        <StatTile label="Available Guards" value={data.stats.availableGuards} />
-        <StatTile label="Vehicles" value={data.stats.vehicles} />
-        <StatTile label="Cameras Online" value={data.stats.camerasOnline} />
-        <StatTile label="Alerts Today" value={data.stats.alertsToday} />
-        <StatTile label="MCI" value={`${data.stats.mciPercent}%`} highlight />
-        <StatTile label="Decision Latency" value={formatDecisionLatency(data.stats.decisionLatencySeconds)} highlight />
+      <div className="rf-ops-grid-hero">
+        <StatTile label="Active Missions" value={counts.active} variant="success" hero />
+        <StatTile label="Critical" value={counts.critical} variant="critical" hero />
+        <StatTile label="Pending" value={counts.pending} variant="warning" hero />
+        <StatTile label="Resolved Today" value={counts.resolvedToday} variant="info" hero />
+      </div>
+
+      <div className="rf-ops-grid-metrics">
+        <StatTile label="Decision Latency" value={formatDecisionLatency(data.stats.decisionLatencySeconds)} variant="info" />
+        <StatTile label="Mission Coordination Index" value={`${data.stats.mciPercent}%`} variant="success" />
+        <StatTile label="Resources Online" value={resourcesOnline} />
+        <StatTile label="Coverage" value={`${coverage}%`} />
+        <StatTile label="Alerts Today" value={data.stats.alertsToday} variant={data.stats.alertsToday > 0 ? 'warning' : 'neutral'} />
       </div>
 
       <div className="rf-grid-2" style={{ marginBottom: '1rem' }}>
         <Card title="Live Map">
-          <LiveMap markers={mapMarkers} title="Operational area" />
+          <LiveMap markers={mapMarkers} title="Operational area" tall />
         </Card>
         <Card title="Mission Feed">
           {data.missions.length === 0 ? (
             <p style={{ color: 'var(--rf-muted)' }}>No missions — run npm run mvp:hijacking</p>
           ) : (
-            data.missions.slice(0, 5).map((m) => (
-              <MissionCard
-                key={m.id}
-                title={m.title}
-                missionId={m.id}
-                state={m.state}
-                time={formatTime(m.updatedAt)}
-                onClick={() => navigate(`/mission?uri=${encodeURIComponent(m.id)}`)}
-              />
+            data.missions.slice(0, 5).map((m, i) => (
+              <div key={m.id} style={{ animationDelay: `${i * 80}ms` }}>
+                <MissionCard
+                  title={m.title}
+                  missionId={m.id}
+                  state={m.state}
+                  time={formatTime(m.updatedAt)}
+                  onClick={() => navigate(`/mission?uri=${encodeURIComponent(m.id)}`)}
+                />
+              </div>
             ))
           )}
         </Card>
@@ -100,7 +141,7 @@ export function DashboardPage() {
 
       <div className="rf-grid-2">
         <Card title="Recent Timeline">
-          <Timeline entries={feedEntries.length ? feedEntries : [{ time: '—', label: 'Awaiting events' }]} />
+          <Timeline entries={feedEntries.length ? feedEntries : [{ time: '—', label: 'Awaiting events' }]} operational />
         </Card>
         <Card title="Resources">
           <ResourcePanel groups={resourceGroups} />

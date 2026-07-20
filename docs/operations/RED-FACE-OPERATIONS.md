@@ -73,7 +73,8 @@ Rejected hypotheses are progress. Update [Hypothesis Ledger](./HYPOTHESIS-LEDGER
 
 Product architecture and company OS are sufficient. **Market validation is the bottleneck.**
 
-- No new major UI surfaces
+- No new major UI **features** or surfaces
+- **70% operator experience polish** · 30% backend stability (bugs, WebSockets, performance)
 - No new doctrine (Volume 11, new axioms, constitutional articles)
 - When a question arises: *Can this be answered by running another mission?* If yes — run it, don't write a document
 
