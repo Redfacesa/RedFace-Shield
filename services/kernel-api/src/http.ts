@@ -14,3 +14,10 @@ export function json(res: ServerResponse, status: number, body: unknown): void {
   res.writeHead(status);
   res.end(JSON.stringify(body, (_, value) => (value instanceof Date ? value.toISOString() : value)));
 }
+
+export function html(res: ServerResponse, status: number, body: string): void {
+  applyCors(res);
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.writeHead(status);
+  res.end(body);
+}

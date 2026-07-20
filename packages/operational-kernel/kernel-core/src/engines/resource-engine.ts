@@ -172,6 +172,14 @@ export class ResourceEngine {
     return result.rows.map(mapResourceRow);
   }
 
+  async listAllocationsForMission(missionUri: RtnUri): Promise<ResourceAllocation[]> {
+    const result = await this.db.query(
+      `SELECT * FROM resource_allocations WHERE mission_id = $1 ORDER BY allocated_at ASC`,
+      [missionUri],
+    );
+    return result.rows.map(mapAllocationRow);
+  }
+
   private async setState(resourceUri: RtnUri, state: ResourceState): Promise<void> {
     await this.db.query(`UPDATE resources SET state = $1, updated_at = NOW() WHERE uri = $2 OR id = $2`, [
       state,
@@ -196,5 +204,19 @@ function mapResourceRow(row: Record<string, unknown>): ResourceRecord {
     metadata: row.metadata as Record<string, unknown>,
     createdAt: new Date(row.created_at as string),
     updatedAt: new Date(row.updated_at as string),
+  };
+}
+
+function mapAllocationRow(row: Record<string, unknown>): ResourceAllocation {
+  const resourceId = row.resource_id as RtnUri;
+  const capUsed = row.capability_used as string;
+  return {
+    id: row.id as string,
+    missionId: row.mission_id as RtnUri,
+    resourceId,
+    capabilityUri: `rtn://capability/${capUsed}` as RtnUri,
+    role: row.role as string,
+    allocatedAt: new Date(row.allocated_at as string),
+    releasedAt: row.released_at ? new Date(row.released_at as string) : undefined,
   };
 }

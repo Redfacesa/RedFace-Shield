@@ -4,7 +4,9 @@ import { envelopeToPublishInput, type RspEnvelope } from '@redface/rsp';
 import { isRtnUri } from '@redface/shared';
 import { getControlRoomDashboard } from './control-room.js';
 import { getHealthStatus } from './health.js';
-import { applyCors, json } from './http.js';
+import { applyCors, html, json } from './http.js';
+import { getMissionBrief } from './mission-brief.js';
+import { buildMissionReportJson, renderMissionReportHtml } from './mission-report.js';
 
 const PORT = Number(process.env.PORT ?? 3000);
 
@@ -66,6 +68,33 @@ async function main() {
         json(res, 400, { error: 'Query param uri=rtn://mission/... required' });
         return;
       }
+
+      const reportFormat = url.searchParams.get('report');
+      if (reportFormat === 'json' || reportFormat === 'html') {
+        try {
+          const baseUrl = process.env.CONTROL_ROOM_URL ?? 'http://localhost:5173';
+          const report = await buildMissionReportJson(kernel, missionUri, baseUrl);
+          if (reportFormat === 'html') {
+            html(res, 200, renderMissionReportHtml(report));
+          } else {
+            json(res, 200, report);
+          }
+        } catch {
+          json(res, 404, { error: 'Mission not found' });
+        }
+        return;
+      }
+
+      if (url.searchParams.get('brief') === 'true') {
+        try {
+          const brief = await getMissionBrief(kernel, missionUri);
+          json(res, 200, { brief });
+        } catch {
+          json(res, 404, { error: 'Mission not found' });
+        }
+        return;
+      }
+
       try {
         const mission = await kernel.mission.get(missionUri);
         const timeline = await kernel.history.getMissionTimeline(missionUri);
@@ -105,7 +134,8 @@ async function main() {
     console.log(`Kernel API (Architecture v${ARCHITECTURE_VERSION}) http://localhost:${PORT}`);
     console.log(`Health: GET /health`);
     console.log(`Control Room: GET /control-room/dashboard`);
-    console.log(`Mission: GET /missions?uri=...&playback=true`);
+    console.log(`Mission: GET /missions?uri=...&brief=true`);
+    console.log(`Report: GET /missions?uri=...&report=html|json`);
   });
 }
 

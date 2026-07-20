@@ -22,7 +22,8 @@
     "sim:recovery": "npm run sim:recovery -w @redface/mission-simulator",
     "kernel:dev": "npm run dev -w @redface/kernel-api",
     "shield:dev": "npm run dev -w @redface/shield-control-room",
-    "shield:build": "npm run build -w @redface/shield-control-room"
+    "shield:build": "npm run build -w @redface/shield-control-room",
+    "accept:recovery": "node scripts/accept-recovery.mjs"
   },
   "engines": {
     "node": ">=20"

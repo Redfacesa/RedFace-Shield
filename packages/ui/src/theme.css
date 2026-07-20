@@ -232,3 +232,121 @@ html.rf-tv .rf-timeline-item,
 html.rf-tv .rf-playback-step {
   font-size: 1.1rem;
 }
+
+/* Operations Wall — fullscreen, no chrome */
+html.rf-wall-mode body {
+  overflow: hidden;
+}
+
+.rf-wall {
+  min-height: 100vh;
+  background: var(--rf-bg);
+  padding: 1.5rem 2rem;
+  color: var(--rf-text);
+}
+
+.rf-wall-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--rf-muted);
+  font-size: 1.25rem;
+}
+
+.rf-wall-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.rf-wall-brand {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--rf-accent);
+  letter-spacing: 0.06em;
+}
+
+.rf-wall-subtitle {
+  font-size: 0.85rem;
+  color: var(--rf-muted);
+  letter-spacing: 0.12em;
+}
+
+.rf-wall-status {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  font-family: var(--rf-mono);
+  font-size: 1.25rem;
+}
+
+.rf-wall-live {
+  color: var(--rf-success);
+  font-weight: 700;
+}
+
+.rf-wall-stats {
+  margin-bottom: 1.5rem;
+}
+
+.rf-wall-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1rem;
+  min-height: calc(100vh - 220px);
+}
+
+.rf-wall-panel {
+  background: var(--rf-surface);
+  border: 1px solid var(--rf-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  overflow: auto;
+}
+
+.rf-wall-panel h2 {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--rf-muted);
+}
+
+.rf-wall-playback-panel {
+  grid-column: 1 / -1;
+  min-height: 50vh;
+}
+
+.rf-wall-mission-row,
+.rf-wall-alert,
+.rf-wall-resource-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--rf-border);
+}
+
+.rf-wall-muted {
+  color: var(--rf-muted);
+  font-size: 0.875rem;
+}
+
+.rf-wall-state {
+  margin-left: auto;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.rf-wall-state-active,
+.rf-wall-state-planning {
+  color: var(--rf-accent);
+}
+
+.rf-wall-state-completed {
+  color: var(--rf-success);
+}

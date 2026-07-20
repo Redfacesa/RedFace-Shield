@@ -61,6 +61,55 @@ export async function fetchMission(uri: string, playback = false): Promise<Missi
   return res.json();
 }
 
+export interface MissionBrief {
+  missionId: string;
+  title: string;
+  objective: string;
+  priority: string;
+  state: string;
+  currentIntelligence: string[];
+  assignedResources: Array<{ label: string; role: string; type: string }>;
+  participants: Array<{ organization: string; role: string }>;
+  knownRisks: string[];
+  successCriteria: string[];
+}
+
+export interface MissionReport {
+  reportId: string;
+  playbackId: string;
+  playbackUrl: string;
+  missionId: string;
+  generatedAt: string;
+  summary: {
+    title: string;
+    objective: string;
+    state: string;
+    priority: string;
+    outcome?: string;
+    result?: string;
+    durationMinutes?: number;
+  };
+  timeline: Array<{ time: string; label: string; type: string }>;
+  participants: Array<{ organization: string; role: string }>;
+  evidence: Array<{ label: string; time: string; type: string }>;
+  attestations: Array<{ type: string; statement: string; by: string }>;
+  mci: { missionCoordinationIndex: number; outcome: string };
+  playback: { entryCount: number; durationSeconds: number };
+}
+
+export async function fetchMissionBrief(uri: string): Promise<MissionBrief> {
+  const res = await fetch(`${API}/missions?uri=${encodeURIComponent(uri)}&brief=true`);
+  if (!res.ok) throw new Error('Brief not found');
+  const data = await res.json();
+  return data.brief;
+}
+
+export async function fetchMissionReport(uri: string): Promise<MissionReport> {
+  const res = await fetch(`${API}/missions?uri=${encodeURIComponent(uri)}&report=json`);
+  if (!res.ok) throw new Error('Report not found');
+  return res.json();
+}
+
 export function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }

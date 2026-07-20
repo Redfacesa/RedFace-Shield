@@ -30,11 +30,19 @@ export function MissionPage() {
           <h1 style={{ marginTop: '0.5rem' }}>{mission.title}</h1>
           <div style={{ fontFamily: 'var(--rf-mono)', fontSize: '0.8rem', color: 'var(--rf-muted)' }}>{mission.id}</div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <StatusChip state={mission.state} />
-          <Link to={`/playback?uri=${encodeURIComponent(mission.id)}`}>
-            <Button primary>▶ Playback</Button>
+          <Link to={`/brief?uri=${encodeURIComponent(mission.id)}`}>
+            <Button>Mission Brief</Button>
           </Link>
+          <Link to={`/playback?uri=${encodeURIComponent(mission.id)}`}>
+            <Button>▶ Playback</Button>
+          </Link>
+          {mission.state === 'completed' && (
+            <Link to={`/report?uri=${encodeURIComponent(mission.id)}`}>
+              <Button primary>Generate Report</Button>
+            </Link>
+          )}
         </div>
       </div>
 
