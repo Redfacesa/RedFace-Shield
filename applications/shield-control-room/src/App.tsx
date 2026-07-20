@@ -6,6 +6,7 @@ import { MissionListPage } from './pages/MissionListPage';
 import { MissionPage } from './pages/MissionPage';
 import { BriefPage } from './pages/BriefPage';
 import { ReportPage } from './pages/ReportPage';
+import { IntelPage } from './pages/IntelPage';
 import { PlaybackPage } from './pages/PlaybackPage';
 import { MapPage } from './pages/MapPage';
 import { WallPage } from './pages/WallPage';
@@ -19,6 +20,7 @@ function ShellNav() {
       <NavLink to="/map" active={pathname === '/map'}>Live Map</NavLink>
       <NavLink to="/playback" active={pathname.startsWith('/playback')}>Operation Replay</NavLink>
       <NavLink to="/wall" active={pathname === '/wall'}>Operations Wall</NavLink>
+      <NavLink to="/intel" active={pathname === '/intel'}>Intel</NavLink>
     </>
   );
 }
@@ -45,6 +47,7 @@ function ControlRoomShell() {
         <Route path="/report" element={<ReportPage />} />
         <Route path="/map" element={<MapPage />} />
         <Route path="/playback" element={<PlaybackPage />} />
+        <Route path="/intel" element={<IntelPage />} />
       </Routes>
     </ControlRoomLayout>
   );

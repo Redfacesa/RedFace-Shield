@@ -2,7 +2,13 @@
 
 Customer-facing experiences on the Operational Kernel. **Thin clients** — display state, submit intents, render timelines. No business logic in UI.
 
-## Rule
+## RedFace Operations (company)
+
+How the company runs: [`docs/operations/RED-FACE-OPERATIONS.md`](../docs/operations/RED-FACE-OPERATIONS.md)
+
+Internal Mission Intelligence: http://localhost:5173/intel
+
+---
 
 > **No feature without an operator story.**
 

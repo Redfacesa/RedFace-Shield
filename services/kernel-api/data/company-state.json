@@ -1,0 +1,25 @@
+{
+  "odrLevel": 1,
+  "odrLabel": "Operational Demonstration Ready",
+  "deployments": [
+    {
+      "id": "DEP-001",
+      "customer": "First reference control room (pending)",
+      "status": "planned",
+      "start": null,
+      "missions": 0
+    }
+  ],
+  "openLearningTickets": 1,
+  "activeHypotheses": 0,
+  "engineeringFocus": [
+    "Reference deployment (DEP-001)",
+    "WebSockets — Wall live updates",
+    "Time to Operational Confidence measurement"
+  ],
+  "instrumentationPending": [
+    "Replay views per mission",
+    "Reports generated count",
+    "Operator satisfaction"
+  ]
+}

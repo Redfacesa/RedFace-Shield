@@ -5,6 +5,7 @@ import { isRtnUri } from '@redface/shared';
 import { getControlRoomDashboard } from './control-room.js';
 import { getHealthStatus } from './health.js';
 import { applyCors, html, json } from './http.js';
+import { getMissionIntelSummary } from './intel.js';
 import { getMissionBrief } from './mission-brief.js';
 import { buildMissionReportJson, renderMissionReportHtml } from './mission-report.js';
 
@@ -47,6 +48,16 @@ async function main() {
         json(res, 200, dashboard);
       } catch (err) {
         json(res, 500, { error: err instanceof Error ? err.message : 'Dashboard failed' });
+      }
+      return;
+    }
+
+    if (url.pathname === '/intel/summary' && req.method === 'GET') {
+      try {
+        const intel = await getMissionIntelSummary(kernel);
+        json(res, 200, intel);
+      } catch (err) {
+        json(res, 500, { error: err instanceof Error ? err.message : 'Intel failed' });
       }
       return;
     }
