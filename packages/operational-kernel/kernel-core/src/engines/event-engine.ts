@@ -1,16 +1,15 @@
-import { generateId, type RspEventRecord } from '@redface/shared';
-import type { RspEventType } from '@redface/rsp';
-import type { IdentityRef } from '@redface/shared';
+import { newEventUri, type IdentityRef, type RspEventRecord, type RtnUri } from '@redface/shared';
 import type { DbPool } from '../db/client.js';
+import { buildPlaybackFromEvents, type MissionPlayback } from '../playback/mission-playback.js';
 import type { PolicyEngine } from './policy-engine.js';
 
-/** Event Engine — Axiom 5: Execution creates events. Axiom 6: Immutable, supersede only. */
+/** Event Engine — Axiom 5 & 6. History Engine — Axiom 7. */
 
 export interface PublishEventInput {
-  type: RspEventType;
+  type: string;
   source: IdentityRef;
-  missionId?: string;
-  intentId?: string;
+  missionUri?: RtnUri;
+  intentUri?: RtnUri;
   payload: Record<string, unknown>;
   occurredAt?: Date;
   signature?: string;
@@ -26,15 +25,16 @@ export class EventEngine {
     await this.policy.require({
       action: 'event.publish',
       actor: input.source,
-      missionId: input.missionId,
+      missionUri: input.missionUri,
       metadata: { eventType: input.type },
     });
 
+    const id = newEventUri();
     const event: RspEventRecord = {
-      id: generateId('RF-EVT'),
+      id,
       type: input.type,
-      missionId: input.missionId,
-      intentId: input.intentId,
+      missionId: input.missionUri,
+      intentId: input.intentUri,
       source: input.source,
       payload: input.payload,
       signature: input.signature,
@@ -50,8 +50,8 @@ export class EventEngine {
         event.type,
         event.missionId ?? null,
         event.intentId ?? null,
-        event.source.id,
-        event.source.organizationId,
+        event.source.uri,
+        event.source.organizationUri,
         JSON.stringify(event.payload),
         event.signature ?? null,
         event.occurredAt.toISOString(),
@@ -61,67 +61,47 @@ export class EventEngine {
     return event;
   }
 
-  async supersede(originalEventId: string, correction: PublishEventInput, actor: IdentityRef): Promise<RspEventRecord> {
-    const replacement = await this.publish({
-      ...correction,
-      source: actor,
-      payload: {
-        ...correction.payload,
-        supersedes: originalEventId,
-      },
-    });
-
-    await this.db.query(`UPDATE events SET superseded_by = $1 WHERE id = $2`, [replacement.id, originalEventId]);
-
-    await this.publish({
-      type: 'rsp.event.superseded',
-      source: actor,
-      missionId: correction.missionId,
-      intentId: correction.intentId,
-      payload: { originalEventId, replacementEventId: replacement.id },
-    });
-
-    return replacement;
-  }
-
-  async listByMission(missionId: string): Promise<RspEventRecord[]> {
+  async listByMission(missionUri: RtnUri): Promise<RspEventRecord[]> {
     const result = await this.db.query(
       `SELECT * FROM events WHERE mission_id = $1 ORDER BY occurred_at ASC`,
-      [missionId],
+      [missionUri],
     );
     return result.rows.map(mapEventRow);
   }
 }
 
-function mapEventRow(row: Record<string, unknown>): RspEventRecord {
-  return {
-    id: row.id as string,
-    type: row.type as string,
-    missionId: row.mission_id as string | undefined,
-    intentId: row.intent_id as string | undefined,
-    source: {
-      id: row.source_identity as string,
-      organizationId: row.source_organization as string,
-    },
-    payload: row.payload as Record<string, unknown>,
-    signature: row.signature as string | undefined,
-    supersededBy: row.superseded_by as string | undefined,
-    occurredAt: new Date(row.occurred_at as string),
-    recordedAt: new Date(row.recorded_at as string),
-  };
-}
-
-/** History Engine — Axiom 7: History is derived from events, never rewritten. */
-
 export class HistoryEngine {
   constructor(private readonly events: EventEngine) {}
 
-  async getMissionTimeline(missionId: string): Promise<RspEventRecord[]> {
-    return this.events.listByMission(missionId);
+  async getMissionTimeline(missionUri: RtnUri): Promise<RspEventRecord[]> {
+    return this.events.listByMission(missionUri);
   }
 
-  async exportMissionAudit(missionId: string): Promise<{ missionId: string; events: RspEventRecord[] }> {
-    const timeline = await this.getMissionTimeline(missionId);
-    return { missionId, events: timeline };
+  async exportMissionAudit(missionUri: RtnUri): Promise<{ missionUri: RtnUri; events: RspEventRecord[] }> {
+    const events = await this.getMissionTimeline(missionUri);
+    return { missionUri, events };
   }
+
+  async buildPlayback(missionUri: RtnUri): Promise<MissionPlayback> {
+    const events = await this.getMissionTimeline(missionUri);
+    return buildPlaybackFromEvents(missionUri, events);
+  }
+}
+
+function mapEventRow(row: Record<string, unknown>): RspEventRecord {
+  return {
+    id: row.id as RtnUri,
+    type: row.type as string,
+    missionId: row.mission_id as RtnUri | undefined,
+    intentId: row.intent_id as RtnUri | undefined,
+    source: {
+      uri: row.source_identity as RtnUri,
+      organizationUri: row.source_organization as RtnUri,
+    },
+    payload: row.payload as Record<string, unknown>,
+    signature: row.signature as string | undefined,
+    supersededBy: row.superseded_by as RtnUri | undefined,
+    occurredAt: new Date(row.occurred_at as string),
+    recordedAt: new Date(row.recorded_at as string),
+  };
 }

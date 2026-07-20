@@ -1,6 +1,6 @@
 {
   "name": "@redface/kernel-core",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
@@ -16,7 +16,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "db:migrate": "node --import tsx src/db/migrate.ts",
-    "mvp:hijacking": "node --import tsx src/mvp/hijacking-recovery.ts"
+    "mvp:hijacking": "node --import tsx src/mvp/hijacking-recovery.ts",
+    "playback:demo": "node --import tsx src/tools/mission-playback-demo.ts"
   },
   "dependencies": {
     "@redface/rsp": "*",

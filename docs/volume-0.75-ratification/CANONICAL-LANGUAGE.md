@@ -118,10 +118,100 @@ The **immutable accumulation of verified events** — derived, never rewritten.
 - *Is:* Bodycam recording with hash, signature, and custody chain
 - *Is not:* An unverified screenshot, an editable PDF, raw video without custody
 
-Evidence is a specialized class of history object governed by Trust Engine.
+Evidence is a specialized class of history object governed by Trust Engine (verification) and Attestation Engine (standing behind custody).
 
-**Engine:** Trust Engine  
+**Engine:** Trust Engine (verification) · Attestation Engine (standing)  
 **Identity prefix:** `RF-EVD-*`
+
+---
+
+### Verification
+
+**"I checked this."** — A technical or procedural check recorded by Trust Engine.
+
+- *Is:* License validated against PSIRA registry; hash matches file
+- *Is not:* Public endorsement; marketing claim; stored trust score
+
+**Engine:** Trust Engine
+
+---
+
+### Attestation
+
+**"I publicly stand behind this."** — A signed statement of responsibility, separate from verification.
+
+- *Is:* Officer Smith attests evidence custody; SIA attests training certificate
+- *Is not:* Automated check; implied trust; editable endorsement
+
+Attestations can be revoked. Verification records remain in history.
+
+**Engine:** Attestation Engine  
+**Identity prefix:** `rtn://document/att-*`
+
+---
+
+### Ownership
+
+The **single legal owner** of an object — a first-class relationship, not a property field.
+
+- *Is:* Shopping Centre owns Camera CAM-12
+- *Is not:* Organization membership; steward role; "managed by" metadata
+
+Exactly one owner per subject per ownership type. Many parties may steward or use.
+
+**Engine:** Ownership Engine
+
+---
+
+### Steward
+
+A **governance relationship** — responsible for operation, custody, or oversight without necessarily owning.
+
+- *Is:* Control Room operates camera; Police Unit custodians evidence; Admin stewards organization
+- *Is not:* Owner; generic participant; job title without kernel registration
+
+Many stewards per subject, each with a role.
+
+**Engine:** Ownership Engine
+
+---
+
+### Credential
+
+A **proof mechanism** presented to establish identity — passkey, hardware key, smart card, API key, OAuth token, certificate, OTP.
+
+- *Is:* WebAuthn assertion; service API key; X.509 client certificate
+- *Is not:* Permission; session; role; authorization decision
+
+Credential Engine validates credentials. It does not grant access.
+
+**Engine:** Credential Engine (planned)
+
+---
+
+### Session
+
+A **time-bounded operational binding** between an authenticated identity and platform state.
+
+- *Is:* Browser session; patrol terminal session; API session with operational context
+- *Is not:* JWT as architecture; permanent permission; identity record
+
+JWT may represent a session. Session model is canonical.
+
+**Engine:** Session Engine (planned)
+
+---
+
+### Operational Context
+
+The **live state surrounding an authenticated actor** used for policy evaluation.
+
+- *Is:* Current mission, vehicle, shift, equipment, area, supervisor, steward roles
+- *Is not:* Static role check; identity metadata alone; UI state
+
+Policies evaluate context, not just identity.
+
+**Engine:** Session Engine + Policy Engine
 
 ---
 
@@ -164,14 +254,18 @@ Humans decide whether computed trust is sufficient. The platform provides verifi
 
 ---
 
-### Identity
+### RTN URI
 
-A **unique participant** in the Operational Graph — organization, person, asset, property, or operational object.
+**RedFace Trust Network URI** — canonical global address for every object.
 
-- *Is:* Verified, attributable, persistent `RF-*` identifier
-- *Is not:* A display name, an email alone, an unverified API key
+```
+rtn://organization/adt
+rtn://guard/284729
+rtn://capability/vehicle-recovery
+rtn://mission/CPT-2026-000001
+```
 
-**Engine:** Identity Engine
+Use URIs in APIs. Not numeric IDs. Not legacy `RF-*` prefixes in new code.
 
 ---
 
@@ -187,9 +281,9 @@ Every RedFace vertical implements this loop. Not optional.
 
 ### Operational Kernel
 
-The ten engines that implement RedFace: Identity, Trust, Intent, Mission, Resource, Policy, Event, History, Intelligence, Economy.
+The engines that implement RedFace: Identity, Organization, Ownership, Capability, Trust, Attestation, Intent, Mission, Resource, Policy, Event, History, Credential, Session, Intelligence, Economy.
 
-Applications compose engines. Applications do not embed kernel logic.
+Every engine defines an [Engine Contract](ENGINE-CONTRACT.md). Applications compose engines. Applications do not embed kernel logic.
 
 ---
 
@@ -232,7 +326,9 @@ Do not use these in doctrine, code, or product specs:
 | "Security platform" (internal) | Shield reference implementation |
 | "Edit event" / "Update history" | Supersede with new event |
 | "AI decided" | AI recommended; human/policy confirmed |
-| "Find Company X" | Match required capabilities |
+| "Auth Engine" | Credential Engine |
+| "Owner field on resource" | Ownership relationship |
+| "Verified" (when meaning attested) | Attested (Attestation Engine) |
 
 ---
 
@@ -252,4 +348,5 @@ No shadow vocabulary.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.75-draft | 2026-07-20 | Ownership, Steward, Attestation, Credential, Session, Operational Context |
 | 0.75-draft | 2026-07-20 | Initial canonical language — Ratification Phase |

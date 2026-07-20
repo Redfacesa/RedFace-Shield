@@ -1,25 +1,25 @@
-import { generateId, type IdentityRef, type PolicyDecision } from '@redface/shared';
+import { buildRtnUri, generateLocalId, type IdentityRef, type PolicyDecision, type RtnUri } from '@redface/shared';
 import type { DbPool } from '../db/client.js';
 
-/** Policy Engine — Axiom 3: Permission precedes execution. Default deny in production; MVP uses explicit allow rules. */
+/** Policy Engine — Axiom 3: Permission precedes execution. Authorization is separate from identity and auth. */
 
 export interface PolicyContext {
   action: string;
   actor: IdentityRef;
-  missionId?: string;
+  missionUri?: RtnUri;
   metadata?: Record<string, unknown>;
 }
 
 export class PolicyEngine {
   constructor(
     private readonly db: DbPool,
-    private readonly version = 'mvp-1.0',
+    private readonly version = 'mvp-2.0',
   ) {}
 
   async evaluate(context: PolicyContext): Promise<PolicyDecision> {
     const allowed = this.evaluateRules(context);
     const rationale = allowed
-      ? `Action '${context.action}' permitted for ${context.actor.organizationId}`
+      ? `Action '${context.action}' permitted for ${context.actor.organizationUri}`
       : `Action '${context.action}' denied by default policy`;
 
     const decision: PolicyDecision = {
@@ -29,14 +29,15 @@ export class PolicyEngine {
       decidedAt: new Date(),
     };
 
+    const polUri = buildRtnUri('document', generateLocalId('pol'));
     await this.db.query(
       `INSERT INTO policy_decisions (id, action, actor_id, actor_org, allowed, rationale, policy_version, context)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
-        generateId('RF-POL'),
+        polUri,
         context.action,
-        context.actor.id,
-        context.actor.organizationId,
+        context.actor.uri,
+        context.actor.organizationUri,
         allowed,
         rationale,
         this.version,
@@ -55,6 +56,10 @@ export class PolicyEngine {
   }
 
   private evaluateRules(context: PolicyContext): boolean {
+    if (context.action === 'mission.read') {
+      return context.actor.organizationUri.startsWith('rtn://organization/');
+    }
+
     const allowedActions = new Set([
       'intent.declare',
       'intent.accept',
@@ -64,11 +69,11 @@ export class PolicyEngine {
       'resource.release',
       'event.publish',
       'mission.complete',
+      'identity.register',
+      'organization.register',
+      'capability.register',
+      'trust.verify',
     ]);
-
-    if (context.actor.organizationId.startsWith('RF-ORG-VIEW-')) {
-      return context.action === 'mission.read';
-    }
 
     return allowedActions.has(context.action);
   }

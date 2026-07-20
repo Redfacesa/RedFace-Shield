@@ -1,5 +1,10 @@
 /** Canonical identifiers — Axiom 1: Everything has identity. */
 
+export * from './rtn.js';
+import type { RtnUri } from './rtn.js';
+import { buildRtnUri, generateLocalId } from './rtn.js';
+
+/** @deprecated Use buildRtnUri — legacy Phase 1 prefix IDs */
 export type IdPrefix =
   | 'RF-INT'
   | 'RF-MSN'
@@ -11,10 +16,29 @@ export type IdPrefix =
   | 'RF-EVD'
   | 'RF-POL';
 
+/** @deprecated Use buildRtnUri */
 export function generateId(prefix: IdPrefix): string {
   const year = new Date().getFullYear();
   const suffix = crypto.randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase();
   return `${prefix}-${year}-${suffix}`;
+}
+
+/** Create RTN URI for operational objects */
+export function newIntentUri(localId?: string): RtnUri {
+  return buildRtnUri('intent', localId ?? generateLocalId('int'));
+}
+
+export function newMissionUri(localId?: string): RtnUri {
+  return buildRtnUri('mission', localId ?? generateLocalId('msn'));
+}
+
+export function newEventUri(): RtnUri {
+  return buildRtnUri('event', generateLocalId('evt'));
+}
+
+export interface IdentityRef {
+  uri: RtnUri;
+  organizationUri: RtnUri;
 }
 
 export type Priority = 'critical' | 'high' | 'medium' | 'low';
@@ -47,32 +71,27 @@ export interface GeoPoint {
   lon: number;
 }
 
-export interface IdentityRef {
-  id: string;
-  organizationId: string;
-}
-
 export interface IntentRecord {
-  id: string;
+  id: RtnUri;
   type: string;
   statement: string;
   expressedBy: IdentityRef;
   priority: Priority;
   state: IntentState;
   context?: Record<string, unknown>;
-  missionId?: string;
+  missionId?: RtnUri;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface MissionRecord {
-  id: string;
-  intentId: string;
+  id: RtnUri;
+  intentId: RtnUri;
   type: string;
   title: string;
   state: MissionState;
-  ownerId: string;
-  capabilitiesRequired: string[];
+  ownerUri: RtnUri;
+  capabilitiesRequired: RtnUri[];
   priority: Priority;
   outcome?: MissionOutcome;
   createdAt: Date;
@@ -87,13 +106,12 @@ export interface MissionOutcome {
 }
 
 export interface ResourceRecord {
-  id: string;
+  id: RtnUri;
   type: string;
-  organizationId: string;
-  capabilityTypes: string[];
+  organizationUri: RtnUri;
+  capabilityUris: RtnUri[];
   state: ResourceState;
   location?: GeoPoint;
-  trustScore: number;
   metadata?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
@@ -101,30 +119,30 @@ export interface ResourceRecord {
 
 export interface ResourceAllocation {
   id: string;
-  missionId: string;
-  resourceId: string;
-  capabilityUsed: string;
+  missionId: RtnUri;
+  resourceId: RtnUri;
+  capabilityUri: RtnUri;
   role: string;
   allocatedAt: Date;
   releasedAt?: Date;
 }
 
 export interface MissionParticipant {
-  missionId: string;
-  organizationId: string;
+  missionId: RtnUri;
+  organizationUri: RtnUri;
   role: string;
   joinedAt: Date;
 }
 
 export interface RspEventRecord {
-  id: string;
+  id: RtnUri;
   type: string;
-  missionId?: string;
-  intentId?: string;
+  missionId?: RtnUri;
+  intentId?: RtnUri;
   source: IdentityRef;
   payload: Record<string, unknown>;
   signature?: string;
-  supersededBy?: string;
+  supersededBy?: RtnUri;
   occurredAt: Date;
   recordedAt: Date;
 }

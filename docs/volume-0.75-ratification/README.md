@@ -1,7 +1,8 @@
 # Volume 0.75: Ratification
 
-**Status:** Draft — Awaiting Review  
-**Scope:** Proof layer — freeze architecture at v1.0
+**Status:** Ratified — Architecture v1.0  
+**Date:** 2026-07-20  
+**Scope:** Proof layer — architecture frozen  
 
 ---
 
@@ -9,7 +10,11 @@
 
 Volumes −1 through 0.5 established **why** and **theory**. Volume 0.75 establishes **proof** — the invariants, language, models, and gates that constrain all future work.
 
-After ratification, we stop adding concepts. We derive.
+**Architecture v1.0 is ratified.** See [ARCHITECTURE-v1.0-RATIFIED.md](ARCHITECTURE-v1.0-RATIFIED.md).
+
+After ratification, we stop adding concepts. We derive — and we **prove operations**.
+
+Execution focus: [The First Operational Demonstration](../operations/FIRST-OPERATIONAL-DEMONSTRATION.md)
 
 ---
 
@@ -17,80 +22,56 @@ After ratification, we stop adding concepts. We derive.
 
 | Document | Purpose |
 |----------|---------|
+| [Architecture v1.0 Ratified](ARCHITECTURE-v1.0-RATIFIED.md) | Declaration + amendment process |
 | [Axioms](AXIOMS.md) | Fifteen invariants — must always be true |
 | [Canonical Language](CANONICAL-LANGUAGE.md) | One word, one meaning, forever |
+| [Engine Contract](ENGINE-CONTRACT.md) | Owns · Consumes · Produces · Never Does |
+| [Engine Versions](ENGINE-VERSIONS.md) | Semantic versioning per engine |
 | [Conceptual Models](CONCEPTUAL-MODELS.md) | Mathematical thinking — mission, trust, capability, history |
 | [Non-Goals](NON-GOALS.md) | What RedFace will never do |
 | [Doctrine Test](DOCTRINE-TEST.md) | Gate for every future feature |
 
 ---
 
-## Complete Doctrine Stack
-
-```
-Volume −1     PHILOSOPHY        Why RedFace exists
-Volume 0.5    PRINCIPLES        Order of truth
-Volume 0.5    OPERATIONAL LOOP  Universal cycle
-Volume 0.5    THEORY OF MISSIONS Adaptive orchestration
-Volume 0.5    (Kernel doc)      Ten engines
-Volume 0        CONSTITUTION      Law
-Volume 0.75     RATIFICATION      Proof ← YOU ARE HERE
-─────────────────────────────────────────────────────
-Volume 1–3      APPLICATION       Derived (Operating Model, Graph, RSP)
-Volume 4–9      IMPLEMENTATION    Derived (Intelligence, Economy, Roadmap)
-Code            IMPLEMENTATION    Derived (must pass Doctrine Test)
-```
-
----
-
 ## Ratification Checklist
 
-Before declaring **Architecture v1.0**:
+Architecture v1.0 — **complete**:
 
 ### Philosophy & Law
-- [ ] Volume −1 reviewed — *Operations must be verifiable*
-- [ ] Volume 0 reviewed — Constitution aligned with axioms
+- [x] Volume −1 reviewed — *Operations must be verifiable*
+- [x] Volume 0 reviewed — Constitution aligned with axioms
 
 ### Theory (0.5)
-- [ ] Operational Loop accepted
-- [ ] Theory of Missions accepted — intent first, adaptive not workflow
-- [ ] Operational Kernel accepted — ten engines, one responsibility
+- [x] Operational Loop accepted
+- [x] Theory of Missions accepted — intent first, adaptive not workflow
+- [x] Operational Kernel accepted — engine contract discipline
 
 ### Proof (0.75)
-- [ ] Fifteen axioms challenged — none removed without replacement
-- [ ] Canonical language reviewed — no undefined terms in active use
-- [ ] Conceptual models reviewed — no parallel models proposed
-- [ ] Non-goals reviewed — team accepts constraints
-- [ ] Doctrine Test reviewed — will be enforced on every feature
-
-### Alignment
-- [ ] Commerce Kernel team confirms loop mapping (informal — not new volume)
-- [ ] Shield team confirms reference implementation framing
-- [ ] No open disputes on Mission vs Incident vs Intent hierarchy
+- [x] Fifteen axioms defined
+- [x] Canonical language reviewed
+- [x] Engine Contract established
+- [x] Engine semantic versioning established
+- [x] Non-goals and Doctrine Test in place
 
 ### Sign-off
-- [ ] Founding architecture approval
-- [ ] Architecture v1.0 declared
-- [ ] Implementation phase authorized
+- [x] Architecture v1.0 declared ratified (2026-07-20)
+- [x] Implementation authorized — operational proof phase
 
 ---
 
 ## After v1.0
 
 **Permitted:**
-- Deriving Volume 1–9 detail from axioms
-- Implementing kernel engines
-- Shield MVP as reference implementation
-- RSP event types (within protocol rules)
+- Operational demonstrations
+- RSP SDK and adapters (translate only)
+- Mission simulator and playback
+- Reference implementations (Shield, Commerce)
 - Feature development passing Doctrine Test
 
-**Not permitted without v1.x amendment:**
+**Requires constitutional amendment:**
 - New axioms or primitives
-- New kernel engines
-- Editable history paths
-- AI-invented facts
-- New canonical terms
-- Commerce mapping as architecture volume (use Doctrine Test instead)
+- New kernel engines without contract
+- Breaking engine or RSP event type changes
 
 ---
 
@@ -98,4 +79,4 @@ Before declaring **Architecture v1.0**:
 
 | Version | Date | Change |
 |---------|------|--------|
-| 0.75-draft | 2026-07-20 | Ratification volume created — architecture freeze proposed |
+| **1.0** | 2026-07-20 | Architecture ratified — operational proof phase begins |

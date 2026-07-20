@@ -340,11 +340,15 @@ All transports carry the same RSP event envelope. Transport choice is an integra
 
 RSP follows semantic versioning:
 
-- **Major** — breaking changes to envelope or event types (migration required)
+- **Major** — breaking changes to envelope (migration required)
 - **Minor** — new event types or optional payload fields (backward compatible)
 - **Patch** — documentation, clarifications (no schema change)
 
-Current version: **1.0-draft**
+**Event type immutability:** Once an event type is released (e.g. `rsp.camera.motion.detected.v1`), it must never change incompatibly. Add `rsp.camera.motion.detected.v2` instead. Adapters upgrade independently.
+
+Implementation: [@redface/rsp SDK](../volume-08-developer-platform/RSP-SDK.md) · Certification: [Certification Program](../volume-08-developer-platform/CERTIFICATION.md)
+
+Current version: **1.0.0**
 
 Participants declare supported RSP version in their RTN identity. RTN translates between versions when necessary.
 

@@ -1,31 +1,29 @@
 import {
-  generateId,
+  buildRtnUri,
+  generateLocalId,
   KernelError,
   type GeoPoint,
   type IdentityRef,
   type ResourceAllocation,
   type ResourceRecord,
   type ResourceState,
+  type RtnUri,
 } from '@redface/shared';
 import type { DbPool } from '../db/client.js';
+import type { CapabilityEngine } from './capability-engine.js';
 import type { EventEngine } from './event-engine.js';
+import type { IdentityEngine } from './identity-engine.js';
 import type { PolicyEngine } from './policy-engine.js';
 
-/** Resource Engine — Axiom 10: Missions allocate capabilities, not brands. */
+/** Resource Engine — concrete allocatable assets. Capabilities matched via Capability Engine. */
 
 export interface RegisterResourceInput {
   type: string;
-  organizationId: string;
-  capabilityTypes: string[];
+  organizationUri: RtnUri;
+  capabilityUris: RtnUri[];
+  localId?: string;
   location?: GeoPoint;
-  trustScore?: number;
   metadata?: Record<string, unknown>;
-}
-
-export interface MatchCapabilitiesInput {
-  capabilities: string[];
-  zone?: GeoPoint;
-  limit?: number;
 }
 
 export class ResourceEngine {
@@ -33,33 +31,48 @@ export class ResourceEngine {
     private readonly db: DbPool,
     private readonly policy: PolicyEngine,
     private readonly events: EventEngine,
+    private readonly identity: IdentityEngine,
+    private readonly capabilities: CapabilityEngine,
   ) {}
 
   async register(input: RegisterResourceInput): Promise<ResourceRecord> {
+    for (const cap of input.capabilityUris) {
+      await this.capabilities.get(cap);
+    }
+
+    const localId = input.localId ?? generateLocalId(input.type.slice(0, 3));
+    const uri = buildRtnUri('resource', localId);
+
+    await this.identity.register({
+      kind: 'resource',
+      localId,
+      displayName: `${input.type}:${localId}`,
+      metadata: input.metadata,
+    });
+
     const resource: ResourceRecord = {
-      id: generateId('RF-AST'),
+      id: uri,
       type: input.type,
-      organizationId: input.organizationId,
-      capabilityTypes: input.capabilityTypes,
+      organizationUri: input.organizationUri,
+      capabilityUris: input.capabilityUris,
       state: 'available',
       location: input.location,
-      trustScore: input.trustScore ?? 0,
       metadata: input.metadata,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     await this.db.query(
-      `INSERT INTO resources (id, type, organization_id, capability_types, state, location, trust_score, metadata)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO resources (id, uri, type, organization_id, capability_types, capability_uris, state, location, metadata)
+       VALUES ($1, $1, $2, $3, $4, $5, $6, $7, $8)`,
       [
-        resource.id,
+        uri,
         resource.type,
-        resource.organizationId,
-        resource.capabilityTypes,
+        resource.organizationUri,
+        input.capabilityUris.map((c) => c.split('/').pop()),
+        input.capabilityUris,
         resource.state,
         JSON.stringify(resource.location ?? null),
-        resource.trustScore,
         JSON.stringify(resource.metadata ?? {}),
       ],
     );
@@ -67,43 +80,44 @@ export class ResourceEngine {
     return resource;
   }
 
-  async matchCapabilities(input: MatchCapabilitiesInput): Promise<ResourceRecord[]> {
-    const limit = input.limit ?? 5;
+  async matchByCapabilities(requiredCapabilityUris: RtnUri[], limit = 5): Promise<ResourceRecord[]> {
+    if (requiredCapabilityUris.length === 0) return [];
+
     const result = await this.db.query(
       `SELECT * FROM resources
        WHERE state = 'available'
-         AND capability_types @> $1::text[]
-       ORDER BY trust_score DESC
+         AND capability_uris @> $1::text[]
+       ORDER BY created_at ASC
        LIMIT $2`,
-      [input.capabilities, limit],
+      [requiredCapabilityUris, limit],
     );
     return result.rows.map(mapResourceRow);
   }
 
   async allocate(
-    missionId: string,
-    resourceId: string,
-    capabilityUsed: string,
+    missionUri: RtnUri,
+    resourceUri: RtnUri,
+    capabilityUri: RtnUri,
     role: string,
     actor: IdentityRef,
   ): Promise<ResourceAllocation> {
     await this.policy.require({
       action: 'resource.allocate',
       actor,
-      missionId,
-      metadata: { resourceId, capabilityUsed },
+      missionUri,
+      metadata: { resourceUri, capabilityUri },
     });
 
-    const resource = await this.get(resourceId);
+    const resource = await this.get(resourceUri);
     if (resource.state !== 'available') {
-      throw new KernelError(`Resource ${resourceId} not available`, 'RESOURCE_UNAVAILABLE');
+      throw new KernelError(`Resource ${resourceUri} not available`, 'RESOURCE_UNAVAILABLE');
     }
 
     const allocation: ResourceAllocation = {
       id: `alloc-${crypto.randomUUID()}`,
-      missionId,
-      resourceId,
-      capabilityUsed,
+      missionId: missionUri,
+      resourceId: resourceUri,
+      capabilityUri,
       role,
       allocatedAt: new Date(),
     };
@@ -111,63 +125,70 @@ export class ResourceEngine {
     await this.db.query(
       `INSERT INTO resource_allocations (id, mission_id, resource_id, capability_used, role)
        VALUES ($1, $2, $3, $4, $5)`,
-      [allocation.id, missionId, resourceId, capabilityUsed, role],
+      [allocation.id, missionUri, resourceUri, capabilityUri.split('/').pop(), role],
     );
 
-    await this.setState(resourceId, 'allocated');
+    await this.setState(resourceUri, 'allocated');
 
     await this.events.publish({
       type: 'rsp.resource.allocated',
       source: actor,
-      missionId,
-      payload: { resourceId, capabilityUsed, role, allocationId: allocation.id },
+      missionUri,
+      payload: { resource: resourceUri, capability: capabilityUri, role },
     });
 
     return allocation;
   }
 
-  async release(missionId: string, resourceId: string, actor: IdentityRef): Promise<void> {
-    await this.policy.require({ action: 'resource.release', actor, missionId, metadata: { resourceId } });
+  async release(missionUri: RtnUri, resourceUri: RtnUri, actor: IdentityRef): Promise<void> {
+    await this.policy.require({ action: 'resource.release', actor, missionUri, metadata: { resourceUri } });
 
     await this.db.query(
       `UPDATE resource_allocations SET released_at = NOW()
        WHERE mission_id = $1 AND resource_id = $2 AND released_at IS NULL`,
-      [missionId, resourceId],
+      [missionUri, resourceUri],
     );
 
-    await this.setState(resourceId, 'available');
+    await this.setState(resourceUri, 'available');
 
     await this.events.publish({
       type: 'rsp.resource.released',
       source: actor,
-      missionId,
-      payload: { resourceId },
+      missionUri,
+      payload: { resource: resourceUri },
     });
   }
 
-  async get(resourceId: string): Promise<ResourceRecord> {
-    const result = await this.db.query(`SELECT * FROM resources WHERE id = $1`, [resourceId]);
+  async get(resourceUri: RtnUri): Promise<ResourceRecord> {
+    const result = await this.db.query(`SELECT * FROM resources WHERE uri = $1 OR id = $1`, [resourceUri]);
     if (result.rowCount === 0) {
-      throw new KernelError(`Resource not found: ${resourceId}`, 'RESOURCE_NOT_FOUND');
+      throw new KernelError(`Resource not found: ${resourceUri}`, 'RESOURCE_NOT_FOUND');
     }
     return mapResourceRow(result.rows[0]);
   }
 
-  private async setState(resourceId: string, state: ResourceState): Promise<void> {
-    await this.db.query(`UPDATE resources SET state = $1, updated_at = NOW() WHERE id = $2`, [state, resourceId]);
+  private async setState(resourceUri: RtnUri, state: ResourceState): Promise<void> {
+    await this.db.query(`UPDATE resources SET state = $1, updated_at = NOW() WHERE uri = $2 OR id = $2`, [
+      state,
+      resourceUri,
+    ]);
   }
 }
 
 function mapResourceRow(row: Record<string, unknown>): ResourceRecord {
+  const uri = (row.uri ?? row.id) as RtnUri;
+  const capUris = (row.capability_uris as RtnUri[] | null) ?? [];
   return {
-    id: row.id as string,
+    id: uri,
     type: row.type as string,
-    organizationId: row.organization_id as string,
-    capabilityTypes: row.capability_types as string[],
+    organizationUri: row.organization_id as RtnUri,
+    capabilityUris:
+      capUris.length > 0
+        ? capUris
+        : ((row.capability_types as string[]) ?? []).map((s) => `rtn://capability/${s}` as RtnUri),
     state: row.state as ResourceRecord['state'],
     location: row.location as GeoPoint | undefined,
-    trustScore: Number(row.trust_score),
-    metadata: row.metadata as Record<string, unknown> | undefined,
+    metadata: row.metadata as Record<string, unknown>,
     createdAt: new Date(row.created_at as string),
     updatedAt: new Date(row.updated_at as string),
   };

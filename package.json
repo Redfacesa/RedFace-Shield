@@ -1,8 +1,8 @@
 {
   "name": "redface-platform",
   "private": true,
-  "version": "0.1.0",
-  "description": "RedFace Operational Infrastructure Platform",
+  "version": "1.0.0",
+  "description": "RedFace Operational Infrastructure Platform — Architecture v1.0",
   "workspaces": [
     "packages/*",
     "packages/operational-kernel/*",
@@ -16,6 +16,8 @@
     "db:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
     "db:migrate": "npm run db:migrate -w @redface/kernel-core",
     "mvp:hijacking": "npm run mvp:hijacking -w @redface/kernel-core",
+    "playback:demo": "npm run playback:demo -w @redface/kernel-core",
+    "sim:recovery": "npm run sim:recovery -w @redface/mission-simulator",
     "kernel:dev": "npm run dev -w @redface/kernel-api"
   },
   "engines": {

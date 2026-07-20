@@ -1,0 +1,6 @@
+{
+  "name": "@redface/trust-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Phase 2 — implemented in @redface/kernel-core/src/engines/trust-engine.ts. Trust is derived, never stored."
+}

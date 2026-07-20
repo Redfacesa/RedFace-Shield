@@ -1,0 +1,6 @@
+{
+  "name": "@redface/identity-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Phase 2 — implemented in @redface/kernel-core/src/engines/identity-engine.ts"
+}

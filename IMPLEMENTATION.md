@@ -1,80 +1,69 @@
-# Phase 1 — Operational Kernel
+# Platform v1.0 — Operational Proof
 
-**Status:** Implementation authorized post-doctrine ratification  
-**MVP:** Vehicle hijacking recovery — one complete Operational Loop
+**Architecture v1.0 is ratified.** Progress is measured by operational demonstrations — not engines completed.
 
-## Build Order
+See [Architecture v1.0 Ratified](docs/volume-0.75-ratification/ARCHITECTURE-v1.0-RATIFIED.md) · [The First Operational Demonstration](docs/operations/FIRST-OPERATIONAL-DEMONSTRATION.md)
 
-```
-Operational Kernel  ← Phase 1 (NOW)
-  ↓
-Trust Network (full RTN)
-  ↓
-Shield Applications (proof)
-```
+---
 
-Do **not** start with mobile app, control room UI, or camera firmware.
+## What To Build Next (In Order)
 
-## Monorepo Layout
+| Priority | Deliverable | Command |
+|----------|-------------|---------|
+| 1 | Demonstration A — Vehicle Recovery | `npm run mvp:hijacking` |
+| 2 | RSP SDK | `@redface/rsp` — `RspPublisher.publish()` |
+| 3 | Mission Playback | `npm run playback:demo` |
+| 4 | Mission Simulator | `npm run sim:recovery` |
+| 5 | Demonstration B — Estate Alarm | Scenario defined in simulator |
+| 6 | Credential Engine | When real users need login |
+| 7 | First adapter via SDK | Not before SDK |
+| 8 | Thin Control Room UI | Display + intents only |
 
-```
-packages/
-  shared/                 Canonical types & IDs
-  rsp/                    Event protocol
-  operational-graph/      Graph projections (Phase 2)
-  operational-kernel/
-    kernel-core/          Engine composition + PostgreSQL + MVP
+**Do not build Hikvision adapter before RSP SDK.**
 
-services/
-  kernel-api/             Read API for missions/timeline
+---
 
-applications/               Phase 2 — after kernel validated
-infrastructure/docker/    PostgreSQL + Redis
-docs/                     Doctrine (frozen)
-```
+## Engine Versions
 
-## First Object
+All core engines at **1.0.0**. See [ENGINE-VERSIONS.md](docs/volume-0.75-ratification/ENGINE-VERSIONS.md).
 
-The first table is **`intents`**, not incidents. See `kernel-core/src/db/schema.sql`.
+Kernel API `/health` returns architecture and engine versions.
 
-## Success Metric
+---
 
-> Can one real-world mission move through the entire Operational Loop — from intent to completion — with every action verifiable, every event recorded, and every participant coordinated?
+## Quarterly Objectives (Q1)
 
-Run:
+1. One complete vehicle recovery mission end-to-end  
+2. One third-party device via RSP SDK (simulator acceptable first)  
+3. Two mission types on same kernel without kernel changes  
+4. One verifiable chain of custody from event to mission closure  
+
+---
+
+## Run
 
 ```bash
 npm install
 npm run db:up
 npm run db:migrate
-npm run mvp:hijacking
+npm run mvp:hijacking      # Demonstration A
+npm run playback:demo      # Mission playback timeline
+npm run sim:recovery       # Simulator via RSP SDK
+npm run kernel:dev         # API :3000 — POST /rsp/events, GET /missions?playback=true
 ```
 
-## Doctrine Test (MVP)
+---
 
-| Question | Answer |
-|----------|--------|
-| Axioms | 4, 5, 6, 10, 11, 12, 13 |
-| Engines | Intent, Mission, Resource, Event, History, Policy |
-| First object | Intent |
-| Events | RSP types on mission timeline |
-| History | Append-only `events` table |
-| New primitive? | No |
+## RSP Compatibility
 
-## Storage (Phase 1)
+Event types are immutable once released. Add `.v2` — never break `.v1`.
 
-| Store | Use |
-|-------|-----|
-| PostgreSQL | Intents, missions, resources, events, policy audit |
-| Redis | Phase 2 — live state cache |
-| Object storage | Phase 2 — evidence media |
-| OpenSearch | Phase 2 — search |
-| Graph DB | Phase 2 — relationship traversal |
+See [RSP SDK](docs/volume-08-developer-platform/RSP-SDK.md).
 
-## Next Steps (Phase 2)
+---
 
-1. Identity Engine — full RTN auth, certificates
-2. Trust Engine — evidence hashes, chain of custody
-3. Graph projections from event stream
-4. Hikvision/generic webhook adapter → RSP
-5. Shield control room (reads kernel, no own mission model)
+## Certification (Future)
+
+RSP Compatible · RTN Verified Organization · Mission Ready · Evidence Chain Certified
+
+See [Certification Program](docs/volume-08-developer-platform/CERTIFICATION.md).
